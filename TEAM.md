@@ -2,7 +2,7 @@
 
 <!-- The organisers fill in Members before the day, and mark the squad lead. The squad lead adds Roles by Wed 21 Oct. The product owner adds the squad name, the challenge and the idea on the day. Only the product owner's Claude writes the decisions here; everyone else says "get the latest". -->
 
-**Repo:** Innovation-Hackathon-Squad-X
+**Repo:** Innovation-Hackathon-Squad-D
 **Squad name:** _chosen on the day_
 **Challenge:** _chosen on the day_
 **Why we chose it:** _(one or two sentences)_
@@ -12,6 +12,10 @@
 
 | Name | Profession | Location | Squad lead |
 |---|---|---|---|
+| Rob Edwards | Data Specialist | In person |  |
+| Faye Tremlett | User Researcher | In person | Yes |
+| Rebby Homer | Business Analyst | In person |  |
+| Freya Atkinson | Service Designer | In person |  |
 
 The **squad lead** runs the squad's setup before the day: agreeing the two roles and getting everyone into the Teams channel. They're the product owner unless the squad agrees otherwise.
 
