@@ -16,6 +16,7 @@
 | Faye Tremlett | User Researcher | In person | Yes |
 | Rebby Homer | Business Analyst | In person |  |
 | Freya Atkinson | Service Designer | In person |  |
+| Joe Passi | Content Designer | In person |  |
 
 The **squad lead** runs the squad's setup before the day: agreeing the two roles and getting everyone into the Teams chat. They're the product owner unless the squad agrees otherwise.
 
