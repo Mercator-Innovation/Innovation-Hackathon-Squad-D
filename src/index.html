@@ -32,6 +32,22 @@
       <button type="button" id="f-reset" class="link-button"></button>
     </form>
 
+    <div class="tabs" role="tablist" id="tabs">
+      <button type="button" role="tab" id="tab-homes" aria-controls="panel-homes" aria-selected="true"></button>
+      <button type="button" role="tab" id="tab-areas" aria-controls="panel-areas" aria-selected="false" tabindex="-1"></button>
+      <button type="button" role="tab" id="tab-visits" aria-controls="panel-visits" aria-selected="false" tabindex="-1"></button>
+    </div>
+
+    <div role="tabpanel" id="panel-homes" aria-labelledby="tab-homes">
+    <section aria-labelledby="list-heading" id="list" tabindex="-1">
+      <h2 id="list-heading"></h2>
+      <p class="hint" id="list-hint" aria-live="polite"></p>
+      <div class="table-wrap"><table id="homes"></table></div>
+      <button type="button" id="more" class="secondary"></button>
+    </section>
+    </div>
+
+    <div role="tabpanel" id="panel-areas" aria-labelledby="tab-areas" hidden>
     <div class="two-col">
       <section aria-labelledby="map-heading" class="panel">
         <h2 id="map-heading"></h2>
@@ -48,19 +64,15 @@
         <div class="table-wrap"><table id="areas"></table></div>
       </section>
     </div>
+    </div>
 
-    <section aria-labelledby="list-heading" id="list" tabindex="-1">
-      <h2 id="list-heading"></h2>
-      <p class="hint" id="list-hint" aria-live="polite"></p>
-      <div class="table-wrap"><table id="homes"></table></div>
-      <button type="button" id="more" class="secondary"></button>
-    </section>
-
+    <div role="tabpanel" id="panel-visits" aria-labelledby="tab-visits" hidden>
     <section aria-labelledby="cases-heading" id="cases">
       <h2 id="cases-heading"></h2>
       <p class="hint" id="cases-hint" aria-live="polite"></p>
       <div class="table-wrap"><table id="cases-table"></table></div>
     </section>
+    </div>
 
     <section id="detail" class="detail" hidden tabindex="-1" aria-labelledby="detail-heading"></section>
   </main>
