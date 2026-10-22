@@ -6,7 +6,7 @@
 **Squad name:** Hacky McHackface
 **Challenge:** Healthier homes — finding tenants at risk before they get ill
 **Why we chose it:** Several of us can draw on personal experience with cold, damp or mouldy homes, so it feels relatable, and it was everyone's first instinct after reading the challenges.
-**The idea:** _(one or two sentences, agreed on the day: who it's for, when they need it, and what it does)_
+**The idea:** A tool for Cloch Housing Association's staff, so they can proactively assess and target homes to support their most vulnerable tenants, before health issues or repairs arrive.
 
 ## Members
 
