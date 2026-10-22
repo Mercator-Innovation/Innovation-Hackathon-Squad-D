@@ -38,7 +38,7 @@ The **squad lead** runs the squad's setup before the day: agreeing the two roles
 **What's working:** _(at 17:15)_
 **What's confusing:** _(at 17:15)_
 **What's missing:** _(at 17:15)_
-**What we'll do next:** _(the product owner's call)_
+**What we'll do next:** Joe: content for "Homes to look at first". Freya: make the synthetic data set more realistic. Rebby: a KPIs and tracking page. Faye: the engineer's view of the website.
 **Presenting at show and tell:** _(chosen at 17:15)_
 
 ## Links
