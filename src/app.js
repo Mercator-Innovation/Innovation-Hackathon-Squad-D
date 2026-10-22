@@ -150,8 +150,8 @@
       return heat + hatch;
     }).join("");
 
-    // A pulsing ring sits behind the dot of each home where someone may be more vulnerable
-    const pulses = list.filter((h) => window.RISK.isVulnerable(h.tenant))
+    // A pulsing ring sits behind the dot of each higher-risk home where someone may be more vulnerable
+    const pulses = list.filter((h) => h.risk.band.id === "higher" && window.RISK.isVulnerable(h.tenant))
       .map((h) => `<circle class="pulse ${h.risk.band.id}" cx="${h.x}" cy="${h.y}" r="7" aria-hidden="true"></circle>`).join("");
     const dots = list.map((h) => {
       const vulnerable = window.RISK.isVulnerable(h.tenant) ? ", someone may be more vulnerable" : "";
