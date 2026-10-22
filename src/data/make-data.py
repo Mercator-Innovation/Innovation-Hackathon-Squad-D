@@ -95,14 +95,23 @@ def pick(options):
 
 
 def epc_for(built, walls, heating):
-    score = 3  # D
-    if built >= 2010: score = 1
-    elif built >= 1985: score = 2
-    elif built < 1920: score = 4
+    # Social housing is much better than the national picture: the Scottish House
+    # Condition Survey 2024 found only ~4% of social-sector homes in band E, F or
+    # G, and over half band C or better. So band C is the norm here.
+    # Each bad factor only sometimes counts, since real stock has been
+    # retrofitted unevenly (loft insulation, upgraded boilers) that this model
+    # doesn't track directly. This keeps E/F/G to about one home in eight: still
+    # higher than the real social-sector share, but low enough that most homes
+    # look fine and the flagged ones stand out, which is what the prototype needs.
+    score = 2  # C
+    if built >= 2010: score -= 2
+    elif built >= 1996: score -= 1
+    elif built < 1920: score += 1
     if "insulated" in walls and "not" not in walls: score -= 1
-    if heating in ("Electric storage heaters", "Electric panel heaters", "Solid fuel stove", "Oil boiler"): score += 1
-    score += pick([(-1, 1), (0, 4), (1, 1)])
-    return "ABCDEFG"[max(1, min(6, score))]
+    elif walls in ("Solid stone", "Solid brick", "Concrete panel") and random.random() < 0.3: score += 1
+    if heating in ("Electric storage heaters", "Electric panel heaters", "Solid fuel stove", "Oil boiler") and random.random() < 0.3: score += 1
+    score += pick([(-1, 2), (0, 7), (1, 1)])
+    return "ABCDEFG"[max(0, min(6, score))]
 
 
 def floor_for(home_type):
@@ -184,7 +193,9 @@ for a in AREAS:
         walls = pick(a["walls"])
         heating = pick(a["heating"])
         floor = floor_for(htype)
-        size = pick([("1 apt", 1), ("2 apt", 4), ("3 apt", 4), ("4 apt", 2), ("5 apt", 1)])
+        # Matches Cloch's own published stock profile: 761 three-apartment and
+        # 385 two-apartment homes out of 1,446 (housingregulator.gov.scot).
+        size = pick([("1 apt", 7), ("2 apt", 27), ("3 apt", 53), ("4 apt", 10), ("5 apt", 3)])
         homes.append(dict(id="H%04d" % n, area=a["name"], setting=a["setting"], coast=a["coast"], type=htype,
                           size=size, built=built, walls=walls, floor=floor, epc=epc_for(built, walls, heating),
                           heating=heating, ventilation=ventilation_for(built), exposure=random.choice(a["exposure"]),
@@ -211,7 +222,11 @@ for i, h in enumerate(homes):
     if under5: people = max(people, 2)
     breathing = random.random() < (0.22 if over75 else 0.12)
     other_health = random.random() < (0.35 if over75 else 0.18)
-    disability = h["type"] == "Wheelchair-accessible flat" or random.random() < 0.12
+    # A wheelchair-accessible flat is an allocation fact Cloch already knows, not
+    # something the tenant disclosed, so that part doesn't need consent. Any
+    # other disability is health information: only known if they agreed to share it.
+    disability_adapted = h["type"] == "Wheelchair-accessible flat"
+    disability_self_reported = random.random() < 0.12
     low_income = random.random() < 0.55
     prepayment = random.random() < (0.45 if low_income else 0.15)
     arrears = random.random() < (0.22 if low_income else 0.05)
@@ -224,7 +239,7 @@ for i, h in enumerate(homes):
         consent=consent,
         breathing=breathing if consent == "Yes" else None,
         otherHealth=other_health if consent == "Yes" else None,
-        disability=disability,
+        disability=True if disability_adapted else (disability_self_reported if consent == "Yes" else None),
         lowIncome=low_income, prepayment=prepayment, arrears=arrears,
         language=pick([("English", 12), ("Prefers another language", 1)]),
         easyRead=random.random() < 0.08,

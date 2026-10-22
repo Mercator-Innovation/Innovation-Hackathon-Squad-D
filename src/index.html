@@ -51,6 +51,7 @@
       <button type="button" role="tab" id="tab-homes" aria-controls="panel-homes" aria-selected="true"></button>
       <button type="button" role="tab" id="tab-areas" aria-controls="panel-areas" aria-selected="false" tabindex="-1"></button>
       <button type="button" role="tab" id="tab-visits" aria-controls="panel-visits" aria-selected="false" tabindex="-1"></button>
+      <button type="button" role="tab" id="tab-notes" aria-controls="panel-notes" aria-selected="false" tabindex="-1"></button>
     </div>
 
     <div role="tabpanel" id="panel-homes" aria-labelledby="tab-homes">
@@ -86,6 +87,16 @@
       <h2 id="cases-heading"></h2>
       <p class="hint" id="cases-hint" aria-live="polite"></p>
       <div class="table-wrap"><table id="cases-table"></table></div>
+    </section>
+    </div>
+
+    <div role="tabpanel" id="panel-notes" aria-labelledby="tab-notes" hidden>
+    <section aria-labelledby="notes-heading" id="notes">
+      <h2 id="notes-heading"></h2>
+      <p class="hint" id="notes-hint"></p>
+      <label for="notes-text" class="visually-hidden" id="notes-label"></label>
+      <textarea id="notes-text" class="notes-text"></textarea>
+      <p class="hint saved" id="notes-saved" aria-live="polite"></p>
     </section>
     </div>
 
