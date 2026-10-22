@@ -236,8 +236,10 @@
     const head = C.cases.cols.map((c) => `<th scope="col">${c ? esc(c) : '<span class="visually-hidden">Actions</span>'}</th>`).join("");
     $("cases-table").innerHTML = `<thead><tr>${head}</tr></thead><tbody>` + cases.map((h) => {
       const d = decisions[h.id];
-      const missing = h.risk.unknowns.length
-        ? h.risk.unknowns.map((u) => `<li>${esc(u)}</li>`).join("")
+      // Engineers check the home only. They must never be asked to collect health information.
+      const checks = h.risk.unknowns.filter((u) => !/health/i.test(u));
+      const missing = checks.length
+        ? checks.map((u) => `<li>${esc(u)}</li>`).join("")
         : `<li>${esc(C.cases.nothingMissing)}</li>`;
       return `<tr>
         <th scope="row">${h.id}</th>
