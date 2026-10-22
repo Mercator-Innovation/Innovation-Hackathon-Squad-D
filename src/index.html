@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Homes at risk of damp and cold (prototype)</title>
   <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="display.css">
   <link rel="stylesheet" href="reporting.css">
   <script src="theme.js"></script>
 </head>
@@ -13,21 +12,7 @@
   <a class="skip" href="#list">Skip to the list of homes</a>
   <div class="top-bar">
     <div class="banner" id="banner"></div>
-    <details class="display-settings">
-      <summary>Display settings</summary>
-      <div class="display-panel">
-        <div class="display-option"><input type="checkbox" id="set-dark"><label for="set-dark">Dark mode</label></div>
-        <div class="display-option"><input type="checkbox" id="set-contrast"><label for="set-contrast">High contrast</label></div>
-        <div class="display-option stacked">
-          <label for="set-colours">Colours</label>
-          <select id="set-colours">
-            <option value="standard">Standard</option>
-            <option value="redgreen">Easier for red-green colour blindness</option>
-            <option value="blueyellow">Easier for blue-yellow colour blindness</option>
-          </select>
-        </div>
-      </div>
-    </details>
+    <button type="button" id="theme-toggle" class="theme-toggle" aria-pressed="false">Dark mode: off</button>
   </div>
 
   <main>
