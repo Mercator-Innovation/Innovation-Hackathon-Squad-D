@@ -39,6 +39,7 @@
   $("areas-heading").textContent = C.areas.heading;
   $("list-heading").textContent = C.list.heading;
   $("more").textContent = C.list.more;
+  $("cases-heading").textContent = C.cases.heading;
   document.querySelector('label[for="show-dots"]').textContent = C.map.showDots;
 
   setupFilters();
@@ -98,6 +99,7 @@
     renderMap(list);
     renderAreas(list);
     renderList(list);
+    renderCases();
   }
 
   // ---------- Summary
@@ -225,6 +227,37 @@
     $("more").hidden = shown.length >= list.length;
   }
 
+  // ---------- Visits booked (homes decided as "Visit and check the home")
+  function renderCases() {
+    const visitChoice = C.detail.options[0];
+    const cases = homes.filter((h) => decisions[h.id] && decisions[h.id].choice === visitChoice);
+    $("cases-hint").textContent = cases.length ? C.cases.hint.replace("{n}", cases.length) : C.cases.none;
+    const head = C.cases.cols.map((c) => `<th scope="col">${c ? esc(c) : '<span class="visually-hidden">Actions</span>'}</th>`).join("");
+    $("cases-table").innerHTML = `<thead><tr>${head}</tr></thead><tbody>` + cases.map((h) => {
+      const d = decisions[h.id];
+      const missing = h.risk.unknowns.length
+        ? h.risk.unknowns.map((u) => `<li>${esc(u)}</li>`).join("")
+        : `<li>${esc(C.cases.nothingMissing)}</li>`;
+      return `<tr>
+        <th scope="row">${h.id}</th>
+        <td>${esc(h.area)}</td>
+        <td>
+          <label class="visually-hidden" for="eng-${h.id}">${esc(C.cases.engineer)}, ${h.id}</label>
+          <input type="text" id="eng-${h.id}" data-id="${h.id}" value="${esc(d.engineer || "")}" placeholder="${esc(C.cases.engineerHint)}">
+        </td>
+        <td><ul class="reasons">${missing}</ul></td>
+        <td><button type="button" class="secondary" data-id="${h.id}" style="margin:0">${esc(C.cases.review)} <span class="visually-hidden">${h.id}</span></button></td>
+      </tr>`;
+    }).join("") + "</tbody>";
+
+    $("cases-table").querySelectorAll("input[id^='eng-']").forEach((inp) => inp.addEventListener("change", (e) => {
+      const id = e.target.dataset.id;
+      decisions[id] = Object.assign({}, decisions[id], { engineer: e.target.value.trim() });
+      saveDecisions();
+    }));
+    $("cases-table").querySelectorAll("button[data-id]").forEach((b) => b.addEventListener("click", () => openDetail(b.dataset.id)));
+  }
+
   // ---------- Detail for one home
   function openDetail(id) {
     const h = byId[id];
@@ -296,6 +329,8 @@
               <p class="hint">${esc(Cd.decideHint)}</p>
               ${options}
             </fieldset>
+            <label for="engineer" style="font-weight:600;display:block">${esc(Cd.engineer)}</label>
+            <input type="text" id="engineer" value="${esc(d.engineer || "")}" placeholder="${esc(Cd.engineerHint)}">
             <label for="note" style="font-weight:600;display:block">${esc(Cd.note)}</label>
             <textarea id="note">${esc(d.note || "")}</textarea>
             <p><button type="submit" class="primary">${esc(Cd.save)}</button><span class="saved" id="saved" aria-live="polite"></span></p>
@@ -311,10 +346,11 @@
       e.preventDefault();
       const choice = ($("decide").querySelector("input[name=decision]:checked") || {}).value;
       if (!choice) { $("saved").textContent = "Choose an option first"; return; }
-      decisions[h.id] = { choice, note: $("note").value.trim(), when: new Date().toISOString() };
+      decisions[h.id] = { choice, note: $("note").value.trim(), engineer: $("engineer").value.trim(), when: new Date().toISOString() };
       saveDecisions();
       $("saved").textContent = C.detail.saved;
       renderList(filtered());
+      renderCases();
     });
   }
 

@@ -60,6 +60,17 @@ window.CONTENT = {
     none: "No homes match. Try showing everything."
   },
 
+  cases: {
+    heading: "Visits booked",
+    hint: "{n} homes booked for a visit.",
+    none: "No visits booked yet. Choose “Visit and check the home” on a home to add one here.",
+    cols: ["Home", "Area", "Engineer", "What to log on this visit", ""],
+    engineer: "Engineer",
+    engineerHint: "e.g. Pat Nguyen",
+    nothingMissing: "Nothing missing — just confirm what's already known",
+    review: "Open"
+  },
+
   detail: {
     close: "Back to the list",
     home: "The home",
@@ -83,6 +94,8 @@ window.CONTENT = {
       "Book a repair",
       "No action for now"
     ],
+    engineer: "Engineer visiting (optional)",
+    engineerHint: "e.g. Pat Nguyen",
     note: "Note (optional)",
     save: "Save decision",
     saved: "Decision saved"
