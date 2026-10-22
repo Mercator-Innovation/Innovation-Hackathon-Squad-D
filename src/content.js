@@ -72,8 +72,8 @@ window.CONTENT = {
 
   list: {
     heading: "Homes to look at first",
-    hint: "Sorted by score, highest first. Showing the top {n} of {total}.",
-    cols: ["Home", "Area", "Type", "Age", "Score", "Risk", "Top reasons", "Decision", ""],
+    hint: "Homes at highest risk first.",
+    cols: ["Home", "Area", "Type", "Age", "Risk", "Top reasons", "Decision", ""],
     review: "Review",
     more: "Show 25 more",
     none: "No homes match. Try showing everything."

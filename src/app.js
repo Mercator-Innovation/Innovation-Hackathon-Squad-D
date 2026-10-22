@@ -309,7 +309,7 @@
   function renderList(list) {
     const shown = list.slice(0, state.shown);
     $("list-hint").textContent = list.length ? C.list.hint.replace("{n}", shown.length).replace("{total}", list.length) : C.list.none;
-    const head = C.list.cols.map((c, i) => `<th scope="col"${i === 3 || i === 4 ? ' class="num"' : ""}>${c ? esc(c) : '<span class="visually-hidden">Actions</span>'}</th>`).join("");
+    const head = C.list.cols.map((c, i) => `<th scope="col"${i === 3 ? ' class="num"' : ""}>${c ? esc(c) : '<span class="visually-hidden">Actions</span>'}</th>`).join("");
     $("homes").innerHTML = `<thead><tr>${head}</tr></thead><tbody>` + shown.map((h) => {
       // The Age column already shows when it was built, so don't repeat that reason here too
       const top = h.risk.reasons.filter((r) => !/^Built /.test(r.short)).sort((a, b) => b.points - a.points).slice(0, 3);
@@ -319,7 +319,6 @@
         <td>${esc(h.area)}</td>
         <td>${esc(h.type)}</td>
         <td class="num">${h.built}</td>
-        <td class="num">${h.risk.score}</td>
         <td><span class="badge ${h.risk.band.id}">${esc(h.risk.band.label)}</span></td>
         <td><ul class="reasons">${top.map((r) => `<li>${esc(r.short)}</li>`).join("")}</ul></td>
         <td class="decision">${d ? esc(d.choice) : "Not reviewed"}</td>
