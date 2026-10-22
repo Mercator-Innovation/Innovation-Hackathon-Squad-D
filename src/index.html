@@ -33,6 +33,21 @@
     <h1 id="title"></h1>
     <p class="lead" id="lead"></p>
 
+    <section aria-labelledby="today-heading" id="today">
+      <h2 id="today-heading"></h2>
+      <ul class="today-tasks" id="today-tasks"></ul>
+      <form id="quick-visit" class="quick-visit">
+        <h3 id="quick-visit-heading"></h3>
+        <p class="hint" id="quick-visit-hint"></p>
+        <div class="field">
+          <label for="quick-visit-id" id="quick-visit-label"></label>
+          <input type="text" id="quick-visit-id" autocomplete="off">
+        </div>
+        <button type="submit" class="secondary" id="quick-visit-button"></button>
+        <p class="hint" id="quick-visit-message" aria-live="polite"></p>
+      </form>
+    </section>
+
     <ul class="summary" id="summary" aria-label="Summary"></ul>
 
     <form class="filters" id="filters" aria-labelledby="filters-heading">
