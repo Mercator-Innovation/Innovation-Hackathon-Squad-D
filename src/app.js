@@ -42,6 +42,7 @@
   $("more").textContent = C.list.more;
   $("cases-heading").textContent = C.cases.heading;
   document.querySelector('label[for="show-dots"]').textContent = C.map.showDots;
+  document.querySelector('label[for="show-pulse"]').textContent = C.map.pulse;
 
   setupFilters();
   render();
@@ -78,6 +79,7 @@
     $("filters").addEventListener("submit", (e) => e.preventDefault());
     $("more").addEventListener("click", () => { state.shown += 25; renderList(filtered()); });
     $("show-dots").addEventListener("change", (e) => $("map").classList.toggle("no-dots", !e.target.checked));
+    $("show-pulse").addEventListener("change", (e) => $("map").classList.toggle("no-pulse", !e.target.checked));
   }
 
   function label(id, text) { document.querySelector(`label[for="${id}"]`).textContent = text; }
@@ -148,7 +150,13 @@
       return heat + hatch;
     }).join("");
 
-    const dots = list.map((h) => `<circle class="dot ${h.risk.band.id}${state.selected === h.id ? " selected" : ""}" cx="${h.x}" cy="${h.y}" r="${state.selected === h.id ? 8 : 4}" data-id="${h.id}"><title>${h.id}, ${esc(h.area)}: ${esc(h.risk.band.label)} (${h.risk.score})</title></circle>`).join("");
+    // A pulsing ring sits behind the dot of each home where someone may be more vulnerable
+    const pulses = list.filter((h) => window.RISK.isVulnerable(h.tenant))
+      .map((h) => `<circle class="pulse ${h.risk.band.id}" cx="${h.x}" cy="${h.y}" r="7" aria-hidden="true"></circle>`).join("");
+    const dots = list.map((h) => {
+      const vulnerable = window.RISK.isVulnerable(h.tenant) ? ", someone may be more vulnerable" : "";
+      return `<circle class="dot ${h.risk.band.id}${state.selected === h.id ? " selected" : ""}" cx="${h.x}" cy="${h.y}" r="${state.selected === h.id ? 8 : 4}" data-id="${h.id}"><title>${h.id}, ${esc(h.area)}: ${esc(h.risk.band.label)} (${h.risk.score})${vulnerable}</title></circle>`;
+    }).join("");
 
     const labels = D.areas.map((a) => `<text class="area-label" x="${a.x}" y="${a.y - 58}" text-anchor="middle">${esc(a.name)}</text>`).join("");
 
@@ -162,7 +170,7 @@
       <path class="water" d="M0 0 H${W} V40 C800 60 650 30 500 55 C350 70 200 35 0 50 Z"></path>
       <text class="water-label" x="20" y="30">${esc(C.map.water)}</text>
       <text class="made-up" x="${W - 20}" y="${H - 14}" text-anchor="end">${esc(C.map.madeUp)}</text>
-      ${squares}${dots}${labels}
+      ${squares}<g class="pulses">${pulses}</g>${dots}${labels}
     </svg>`;
 
     $("map").querySelectorAll(".dot").forEach((dot) => dot.addEventListener("click", () => openDetail(dot.dataset.id)));
@@ -171,7 +179,8 @@
       [1, 2, 3, 4, 5].map((i) => `<span class="swatch" style="background:var(--heat-${i})"></span>`).join("") +
       `<span>${esc(C.map.legendHigh)}</span>` +
       (onHousehold ? `<span class="dot-key"><i class="hatch-swatch"></i>${esc(C.map.legendUnknown)}</span>` : "") +
-      window.RISK.bands.map((b) => `<span class="dot-key"><i style="background:var(--${b.id})"></i>${esc(b.label)}</span>`).join("");
+      window.RISK.bands.map((b) => `<span class="dot-key"><i style="background:var(--${b.id})"></i>${esc(b.label)}</span>`).join("") +
+      `<span class="dot-key pulse-key"><i></i>${esc(C.map.legendPulse)}</span>`;
   }
 
   // ---------- Areas table

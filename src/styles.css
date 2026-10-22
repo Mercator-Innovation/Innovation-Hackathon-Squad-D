@@ -118,6 +118,23 @@ h3 { font-size: 18px; margin: 20px 0 8px; }
 #map .dot.lower { fill: var(--lower); }
 #map .dot.selected { stroke: var(--ink); stroke-width: 3; }
 #map.no-dots .dot:not(.selected) { display: none; }
+
+/* Pulse: a ring that grows and fades behind homes where someone may be more vulnerable.
+   Slow (under one pulse a second, well below the 3-flashes-a-second limit), can be turned off,
+   and stays still for people who've asked their computer for less motion. */
+#map .pulse { fill: none; stroke-width: 2.5; pointer-events: none; transform-box: fill-box; transform-origin: center; animation: pulse 1.8s ease-out infinite; }
+#map .pulse.higher { stroke: var(--higher); }
+#map .pulse.medium { stroke: var(--medium); }
+#map .pulse.lower { stroke: var(--lower); }
+#map.no-pulse .pulses, #map.no-dots .pulses { display: none; }
+@keyframes pulse {
+  0%   { transform: scale(0.6); opacity: 1; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #map .pulse { animation: none; opacity: 0.9; }
+}
+.legend .pulse-key i { flex-shrink: 0; width: 14px; height: 14px; border-radius: 50%; border: 2.5px solid var(--ink); background: transparent; }
 .legend { display: flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 14px; flex-wrap: wrap; }
 .legend .swatch { width: 28px; height: 16px; border: 1px solid #0003; }
 .legend .hatch-swatch { width: 28px; height: 16px; border: 1px solid #0003; background: repeating-linear-gradient(45deg, var(--ink) 0 2px, transparent 2px 7px); opacity: 0.6; display: inline-block; }
