@@ -45,7 +45,40 @@
   document.querySelector('label[for="show-pulse"]').textContent = C.map.pulse;
 
   setupFilters();
+  setupTabs();
   render();
+
+  // ---------- Tabs: one view at a time. Arrow keys move between tabs.
+  function setupTabs() {
+    const tabs = [...document.querySelectorAll('[role="tab"]')];
+    $("tab-homes").textContent = C.tabs.homes;
+    $("tab-areas").textContent = C.tabs.areas;
+    $("tab-visits").textContent = C.tabs.visits;
+    tabs.forEach((tab, i) => {
+      tab.addEventListener("click", () => showTab(tab.id));
+      tab.addEventListener("keydown", (e) => {
+        const step = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
+        if (e.key === "Home" || e.key === "End" || step) {
+          e.preventDefault();
+          const next = e.key === "Home" ? tabs[0] : e.key === "End" ? tabs[tabs.length - 1] : tabs[(i + step + tabs.length) % tabs.length];
+          showTab(next.id);
+          next.focus();
+        }
+      });
+    });
+  }
+  function showTab(id) {
+    document.querySelectorAll('[role="tab"]').forEach((tab) => {
+      const on = tab.id === id;
+      tab.setAttribute("aria-selected", on ? "true" : "false");
+      tab.tabIndex = on ? 0 : -1;
+      $(tab.getAttribute("aria-controls")).hidden = !on;
+    });
+    if (state.selected) closeDetail(true);
+  }
+  function activeTab() {
+    return document.querySelector('[role="tab"][aria-selected="true"]').id;
+  }
 
   // ---------- Filters
   function setupFilters() {
@@ -387,13 +420,17 @@
     });
   }
 
-  function closeDetail() {
+  // quiet: closing because the tab changed, so leave focus on the tab
+  function closeDetail(quiet) {
     const id = state.selected;
     state.selected = null;
     $("detail").hidden = true;
     renderMap(filtered());
-    const btn = $("homes").querySelector(`button[data-id="${id}"]`);
-    (btn || $("list")).focus();
+    if (quiet === true) return;
+    // Back to the button that opened it, in whichever tab is showing
+    const panel = $(document.getElementById(activeTab()).getAttribute("aria-controls"));
+    const btn = panel.querySelector(`button[data-id="${id}"]`);
+    (btn || $(activeTab())).focus();
   }
 
   // A week of humidity as a line, with the 70% line dashed
