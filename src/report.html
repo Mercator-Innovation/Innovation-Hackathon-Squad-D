@@ -66,6 +66,13 @@
     .home-card { border: 2px solid var(--accent); background: var(--soft); padding: 12px; display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 20px; }
     .home-card .ref { font-weight: 700; font-size: 18px; }
     .home-card .meta { color: var(--muted); font-size: 14px; }
+    /* Missing information from the officer view: pale yellow plus a "Missing" tag, never colour alone */
+    .checks { background: #fff4d6; border-left: 6px solid #8a5a00; padding: 4px 14px 10px; margin: -8px 0 20px; }
+    .checks h2 { margin: 10px 0 2px; }
+    .checks-hint { margin: 0 0 8px; color: var(--muted); font-size: 15px; }
+    .checks ul { list-style: none; margin: 0; padding: 0; }
+    .checks li { margin-bottom: 8px; }
+    .checks .tag { display: inline-block; font-size: 13px; font-weight: 700; padding: 0 6px; border: 2px solid #8a5a00; color: #6b4600; background: #fff; margin-right: 6px; }
     .link-button { background: none; border: 0; color: var(--accent); text-decoration: underline; font: inherit; padding: 10px 8px; min-height: 44px; cursor: pointer; }
 
     .photo-preview { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
@@ -225,6 +232,7 @@
   </div>
 
   <script src="data/homes.js"></script>
+  <script src="data/sensors.js"></script>
   <script src="report.js"></script>
 </body>
 </html>
