@@ -54,8 +54,6 @@
     $("tab-homes").textContent = C.tabs.homes;
     $("tab-areas").textContent = C.tabs.areas;
     $("tab-visits").textContent = C.tabs.visits;
-    $("tab-notes").textContent = C.tabs.notes;
-    setupNotes();
     tabs.forEach((tab, i) => {
       tab.addEventListener("click", () => showTab(tab.id));
       tab.addEventListener("keydown", (e) => {
@@ -77,21 +75,6 @@
       $(tab.getAttribute("aria-controls")).hidden = !on;
     });
     if (state.selected) closeDetail(true);
-  }
-  // ---------- Notes: a blank page, saved in this browser as you type
-  function setupNotes() {
-    $("notes-heading").textContent = C.notes.heading;
-    $("notes-hint").textContent = C.notes.hint;
-    $("notes-label").textContent = C.notes.label;
-    try { $("notes-text").value = localStorage.getItem("damp-notes") || ""; } catch (e) { /* fine: starts blank */ }
-    let timer;
-    $("notes-text").addEventListener("input", () => {
-      clearTimeout(timer);
-      timer = setTimeout(() => {
-        try { localStorage.setItem("damp-notes", $("notes-text").value); } catch (e) { /* fine: kept for this visit */ }
-        $("notes-saved").textContent = C.notes.saved;
-      }, 500);
-    });
   }
   function activeTab() {
     return document.querySelector('[role="tab"][aria-selected="true"]').id;

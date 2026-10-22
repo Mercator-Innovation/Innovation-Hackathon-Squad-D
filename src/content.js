@@ -56,15 +56,7 @@ window.CONTENT = {
   tabs: {
     homes: "Homes to look at first",
     areas: "Area overview",
-    visits: "Engineer visits booked",
-    notes: "Notes"
-  },
-
-  notes: {
-    heading: "Notes",
-    hint: "Your own notes. They stay in this browser only. Don't write anyone's personal details here.",
-    label: "Your notes",
-    saved: "Saved"
+    visits: "Engineer visits booked"
   },
 
   list: {
