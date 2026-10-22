@@ -73,7 +73,7 @@ window.CONTENT = {
   list: {
     heading: "Homes to look at first",
     hint: "Homes at highest risk first.",
-    cols: ["Home", "Area", "Type", "Age", "Risk", "Top reasons", "Decision", ""],
+    cols: ["Home", "Area", "Type", "Age", "Risk", "Top reasons", ""],
     review: "Review",
     more: "Show 25 more",
     none: "No homes match. Try showing everything."
@@ -83,10 +83,13 @@ window.CONTENT = {
     heading: "Engineer visits booked",
     hint: "{n} homes booked for a visit.",
     none: "No visits booked yet. Choose “Visit and check the home” on a home to add one here.",
-    cols: ["Home", "Area", "Engineer", "What to log on this visit", ""],
+    cols: ["Home", "Area", "Engineer", "Visit type", "What to log on this visit", "Evidence", ""],
     engineer: "Engineer",
     engineerHint: "e.g. Pat Nguyen",
+    visitType: "Visit type",
     nothingMissing: "Nothing missing — just confirm what's already known",
+    addPhoto: "Add photo",
+    viewPhoto: "Photo {n} from the visit to {home}. Opens full size in a new tab.",
     review: "Open"
   },
 
@@ -97,11 +100,9 @@ window.CONTENT = {
     whyMore: "View {n} more",
     whyFewer: "Show fewer",
     points: "points",
-    missing: "What's missing",
-    missingHint: "Information we don't have yet, and how to find it out.",
+    missing: "Information missing",
     missingTag: "Missing",
     notSharedTag: "Not shared",
-    nothingMissing: "Nothing missing. We have all the information we look for.",
     gaps: {
       vacant: { what: "Who lives here", next: "Nobody lives here at the moment. Check the home before someone moves in." },
       dpc: { what: "Damp-proof course", next: "Add a damp-proof course check to the next visit." },
@@ -129,6 +130,13 @@ window.CONTENT = {
     ],
     engineer: "Engineer visiting (optional)",
     engineerHint: "e.g. Pat Nguyen",
+    visitType: "Visit type",
+    visitTypeOptions: [
+      "Check only",
+      "Combined with a repair visit",
+      "Installing a sensor",
+      "Urgent visit"
+    ],
     note: "Note (optional)",
     save: "Save decision",
     saved: "Decision saved"

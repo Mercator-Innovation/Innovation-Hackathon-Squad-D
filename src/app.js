@@ -331,15 +331,13 @@
     $("homes").innerHTML = `<thead><tr>${head}</tr></thead><tbody>` + shown.map((h) => {
       // The Age column already shows when it was built, so don't repeat that reason here too
       const top = h.risk.reasons.filter((r) => !/^Built /.test(r.short)).sort((a, b) => b.points - a.points).slice(0, 3);
-      const d = decisions[h.id];
       return `<tr>
         <th scope="row">${h.id}</th>
         <td>${esc(h.area)}</td>
         <td>${esc(h.type)}</td>
         <td class="num">${h.built}</td>
-        <td><span class="badge ${h.risk.band.id}">${esc(h.risk.band.label)}</span></td>
+        <td><span class="badge ${h.risk.band.id}">${esc(h.risk.band.short)}</span></td>
         <td><ul class="reasons">${top.map((r) => `<li>${esc(r.short)}</li>`).join("")}</ul></td>
-        <td class="decision">${d ? esc(d.choice) : "Not reviewed"}</td>
         <td><button type="button" class="secondary" data-id="${h.id}" style="margin:0">${esc(C.list.review)} <span class="visually-hidden">${h.id}</span></button></td>
       </tr>`;
     }).join("") + "</tbody>";
@@ -367,7 +365,15 @@
           <label class="visually-hidden" for="eng-${h.id}">${esc(C.cases.engineer)}, ${h.id}</label>
           <input type="text" id="eng-${h.id}" data-id="${h.id}" value="${esc(d.engineer || "")}" placeholder="${esc(C.cases.engineerHint)}">
         </td>
+        <td>
+          <label class="visually-hidden" for="type-${h.id}">${esc(C.cases.visitType)}, ${h.id}</label>
+          <select id="type-${h.id}" data-id="${h.id}">${C.detail.visitTypeOptions.map((o) => `<option value="${esc(o)}"${(d.visitType || C.detail.visitTypeOptions[0]) === o ? " selected" : ""}>${esc(o)}</option>`).join("")}</select>
+        </td>
         <td><ul class="reasons">${missing}</ul></td>
+        <td>
+          <ul class="photos">${(d.photos || []).map((src, i) => `<li><a href="${src}" target="_blank" rel="noopener"><img src="${src}" alt="${esc(C.cases.viewPhoto.replace("{n}", i + 1).replace("{home}", h.id))}"></a></li>`).join("")}</ul>
+          <label class="link-button photo-upload">${esc(C.cases.addPhoto)}<input type="file" accept="image/*" multiple data-id="${h.id}" class="visually-hidden"></label>
+        </td>
         <td><button type="button" class="secondary" data-id="${h.id}" style="margin:0">${esc(C.cases.review)} <span class="visually-hidden">${h.id}</span></button></td>
       </tr>`;
     }).join("") + "</tbody>";
@@ -377,6 +383,19 @@
       decisions[id] = Object.assign({}, decisions[id], { engineer: e.target.value.trim() });
       saveDecisions();
       renderToday();
+    }));
+    $("cases-table").querySelectorAll("select[id^='type-']").forEach((sel) => sel.addEventListener("change", (e) => {
+      const id = e.target.dataset.id;
+      decisions[id] = Object.assign({}, decisions[id], { visitType: e.target.value });
+      saveDecisions();
+    }));
+    $("cases-table").querySelectorAll("input[type=file][data-id]").forEach((inp) => inp.addEventListener("change", async (e) => {
+      const id = e.target.dataset.id;
+      const thumbs = await Promise.all(Array.from(e.target.files).map((f) => photoThumbnail(f)));
+      const existing = (decisions[id] && decisions[id].photos) || [];
+      decisions[id] = Object.assign({}, decisions[id], { photos: existing.concat(thumbs) });
+      saveDecisions();
+      renderCases();
     }));
     $("cases-table").querySelectorAll("button[data-id]").forEach((b) => b.addEventListener("click", () => openDetail(b.dataset.id)));
   }
@@ -406,9 +425,6 @@
     if (h.dpc === "Unknown") gaps.push(G.dpc);
     if (!h.sensor) gaps.push(G.sensor);
     else if (h.sensor.missing > 0) gaps.push({ what: G.sensorGaps.what, next: G.sensorGaps.next.replace("{n}", h.sensor.missing) });
-    const missingList = gaps.length
-      ? `<ul class="missing-list">${gaps.map((g) => `<li>${g.shared ? notSharedTag : missingTag}<strong>${esc(g.what)}:</strong> ${esc(g.next)}</li>`).join("")}</ul>`
-      : `<p>${esc(Cd.nothingMissing)}</p>`;
 
     // At most 5 to start, so a home with many small factors doesn't read as an
     // unreadable wall of reasons. "View N more" reveals the rest in place.
@@ -453,11 +469,7 @@
       <div class="detail-column">
           <h3>${esc(Cd.why)}</h3>
           <ul class="why" id="why-list"></ul>
-          <section class="missing-box" aria-labelledby="missing-heading">
-            <h3 id="missing-heading">${esc(Cd.missing)} (${gaps.length})</h3>
-            <p class="hint">${esc(Cd.missingHint)}</p>
-            ${missingList}
-          </section>
+          ${gaps.length ? `<p class="missing-box missing-note">${esc(Cd.missing)}</p>` : ""}
           <h3>${esc(Cd.home)}</h3>
           <dl>
             <dt>Type</dt><dd>${esc(h.type)}, ${esc(h.size)}</dd>
@@ -486,6 +498,8 @@
             </fieldset>
             <label for="engineer" style="font-weight:600;display:block">${esc(Cd.engineer)}</label>
             <input type="text" id="engineer" value="${esc(d.engineer || "")}" placeholder="${esc(Cd.engineerHint)}">
+            <label for="visit-type" style="font-weight:600;display:block">${esc(Cd.visitType)}</label>
+            <select id="visit-type">${Cd.visitTypeOptions.map((o) => `<option value="${esc(o)}"${(d.visitType || Cd.visitTypeOptions[0]) === o ? " selected" : ""}>${esc(o)}</option>`).join("")}</select>
             <label for="note" style="font-weight:600;display:block">${esc(Cd.note)}</label>
             <textarea id="note">${esc(d.note || "")}</textarea>
             <p><button type="submit" class="primary">${esc(Cd.save)}</button><span class="saved" id="saved" aria-live="polite"></span></p>
@@ -501,7 +515,7 @@
       e.preventDefault();
       const choice = ($("decide").querySelector("input[name=decision]:checked") || {}).value;
       if (!choice) { $("saved").textContent = "Choose an option first"; return; }
-      decisions[h.id] = { choice, note: $("note").value.trim(), engineer: $("engineer").value.trim(), when: (d.when && choice === d.choice) ? d.when : new Date().toISOString() };
+      decisions[h.id] = { choice, note: $("note").value.trim(), engineer: $("engineer").value.trim(), visitType: $("visit-type").value, when: (d.when && choice === d.choice) ? d.when : new Date().toISOString() };
       saveDecisions();
       $("saved").textContent = C.detail.saved;
       renderList(filtered());
@@ -545,6 +559,27 @@
   function monthName(m) {
     const [y, mo] = m.split("-").map(Number);
     return new Date(y, mo - 1, 1).toLocaleDateString("en-GB", { month: "long", year: "numeric" });
+  }
+
+  // Shrinks a photo before it's kept, so a few photos don't fill up this browser's storage
+  function photoThumbnail(file, maxDim) {
+    maxDim = maxDim || 480;
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+          const w = Math.round(img.width * scale), h = Math.round(img.height * scale);
+          const canvas = document.createElement("canvas");
+          canvas.width = w; canvas.height = h;
+          canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+          resolve(canvas.toDataURL("image/jpeg", 0.7));
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
   }
 
   // Decisions stay in this browser only, for the prototype
