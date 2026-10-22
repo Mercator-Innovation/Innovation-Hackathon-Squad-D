@@ -41,11 +41,18 @@
   $("list-heading").textContent = C.list.heading;
   $("more").textContent = C.list.more;
   $("cases-heading").textContent = C.cases.heading;
+  $("today-heading").textContent = C.today.heading;
+  $("quick-visit-heading").textContent = C.today.quickVisit.heading;
+  $("quick-visit-hint").textContent = C.today.quickVisit.hint;
+  $("quick-visit-label").textContent = C.today.quickVisit.label;
+  $("quick-visit-id").placeholder = C.today.quickVisit.placeholder;
+  $("quick-visit-button").textContent = C.today.quickVisit.button;
   document.querySelector('label[for="show-dots"]').textContent = C.map.showDots;
   document.querySelector('label[for="show-pulse"]').textContent = C.map.pulse;
 
   setupFilters();
   setupTabs();
+  setupQuickVisit();
   render();
 
   // ---------- Tabs: one view at a time. Arrow keys move between tabs.
@@ -54,8 +61,6 @@
     $("tab-homes").textContent = C.tabs.homes;
     $("tab-areas").textContent = C.tabs.areas;
     $("tab-visits").textContent = C.tabs.visits;
-    $("tab-notes").textContent = C.tabs.notes;
-    setupNotes();
     tabs.forEach((tab, i) => {
       tab.addEventListener("click", () => showTab(tab.id));
       tab.addEventListener("keydown", (e) => {
@@ -77,21 +82,6 @@
       $(tab.getAttribute("aria-controls")).hidden = !on;
     });
     if (state.selected) closeDetail(true);
-  }
-  // ---------- Notes: a blank page, saved in this browser as you type
-  function setupNotes() {
-    $("notes-heading").textContent = C.notes.heading;
-    $("notes-hint").textContent = C.notes.hint;
-    $("notes-label").textContent = C.notes.label;
-    try { $("notes-text").value = localStorage.getItem("damp-notes") || ""; } catch (e) { /* fine: starts blank */ }
-    let timer;
-    $("notes-text").addEventListener("input", () => {
-      clearTimeout(timer);
-      timer = setTimeout(() => {
-        try { localStorage.setItem("damp-notes", $("notes-text").value); } catch (e) { /* fine: kept for this visit */ }
-        $("notes-saved").textContent = C.notes.saved;
-      }, 500);
-    });
   }
   function activeTab() {
     return document.querySelector('[role="tab"][aria-selected="true"]').id;
@@ -149,6 +139,7 @@
   function render() {
     const list = filtered();
     renderSummary(list);
+    renderToday();
     renderMap(list);
     renderAreas(list);
     renderList(list);
@@ -165,6 +156,66 @@
       ["sensors", list.filter((h) => h.sensor).length, C.summary.sensors]
     ];
     $("summary").innerHTML = items.map(([cls, n, text]) => `<li class="${cls}"><span class="num">${n}</span>${esc(text)}</li>`).join("");
+  }
+
+  // ---------- Today: a housing officer's workflow, not just a count of homes
+  function isToday(iso) {
+    const d = new Date(iso);
+    const now = new Date();
+    return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth() && d.getDate() === now.getDate();
+  }
+
+  function renderToday() {
+    const visitChoice = C.detail.options[0];
+    const visits = homes.filter((h) => decisions[h.id] && decisions[h.id].choice === visitChoice);
+    const T = C.today;
+    const plural = (n, text) => text.replace("{s}", n === 1 ? "" : "s");
+    const tasks = [
+      { n: homes.filter((h) => h.risk.band.id === "higher" && !decisions[h.id]).length, text: T.toReview, none: T.toReviewNone, button: T.toReviewButton, tab: "tab-homes", setup: () => { state.band = "higher"; state.unreviewed = true; $("f-band").value = "higher"; $("f-unreviewed").checked = true; state.shown = 25; } },
+      { n: visits.filter((h) => !decisions[h.id].engineer).length, text: T.needsEngineer, none: T.needsEngineerNone, button: T.needsEngineerButton, tab: "tab-visits" },
+      { n: visits.filter((h) => decisions[h.id].when && isToday(decisions[h.id].when)).length, text: T.bookedToday, none: T.bookedTodayNone, button: T.bookedTodayButton, tab: "tab-visits" }
+    ].map((t) => Object.assign(t, { text: plural(t.n, t.text) }));
+    // The most urgent task becomes one big card with a real button; the rest are a short line each.
+    const heroIndex = tasks.reduce((best, t, i) => (t.n > tasks[best].n ? i : best), 0);
+    const hero = tasks[heroIndex];
+    const minor = tasks.filter((_, i) => i !== heroIndex);
+
+    const heroHtml = hero.n
+      ? `<div class="today-hero due">
+          <span class="num">${hero.n}</span>
+          <p>${esc(hero.text)}</p>
+          <button type="button" class="primary" data-task="${heroIndex}">${esc(hero.button)}</button>
+        </div>`
+      : `<div class="today-hero clear"><p>${esc(T.allClear)}</p></div>`;
+
+    const minorHtml = `<ul class="today-minor">` + minor.map((task) => {
+      const i = tasks.indexOf(task);
+      return `<li>${task.n
+        ? `<button type="button" class="link-button" data-task="${i}"><span class="num">${task.n}</span> ${esc(task.text)}</button>`
+        : `<span class="num">${task.n}</span> ${esc(task.none)}`}</li>`;
+    }).join("") + `</ul>`;
+
+    $("today-tasks").innerHTML = heroHtml + minorHtml;
+    $("today-tasks").querySelectorAll("button[data-task]").forEach((b) => b.addEventListener("click", () => {
+      const task = tasks[Number(b.dataset.task)];
+      if (task.setup) task.setup();
+      render();
+      showTab(task.tab);
+      $(task.tab).focus();
+    }));
+  }
+
+  // ---------- Quick visit: jump straight to a home by reference and start a visit
+  function setupQuickVisit() {
+    $("quick-visit").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const id = $("quick-visit-id").value.trim().toUpperCase();
+      const h = byId[id];
+      $("quick-visit-message").textContent = h ? "" : C.today.quickVisit.notFound;
+      if (!h) return;
+      $("quick-visit-id").value = "";
+      openDetail(id, { preselectVisit: true });
+    });
   }
 
   // ---------- Heat map
@@ -316,12 +367,13 @@
       const id = e.target.dataset.id;
       decisions[id] = Object.assign({}, decisions[id], { engineer: e.target.value.trim() });
       saveDecisions();
+      renderToday();
     }));
     $("cases-table").querySelectorAll("button[data-id]").forEach((b) => b.addEventListener("click", () => openDetail(b.dataset.id)));
   }
 
   // ---------- Detail for one home
-  function openDetail(id) {
+  function openDetail(id, opts) {
     const h = byId[id];
     if (!h) return;
     state.selected = id;
@@ -373,7 +425,8 @@
       : `<p>${esc(Cd.noReports)}</p>`;
 
     const d = decisions[h.id] || {};
-    const options = Cd.options.map((o, i) => `<div class="radio"><input type="radio" name="decision" id="opt-${i}" value="${esc(o)}"${d.choice === o ? " checked" : ""}><label for="opt-${i}">${esc(o)}</label></div>`).join("");
+    const preselect = opts && opts.preselectVisit && !d.choice ? Cd.options[0] : d.choice;
+    const options = Cd.options.map((o, i) => `<div class="radio"><input type="radio" name="decision" id="opt-${i}" value="${esc(o)}"${preselect === o ? " checked" : ""}><label for="opt-${i}">${esc(o)}</label></div>`).join("");
 
     $("detail").innerHTML = `
       <button type="button" class="link-button" id="close-detail">${esc(Cd.close)}</button>
@@ -429,11 +482,12 @@
       e.preventDefault();
       const choice = ($("decide").querySelector("input[name=decision]:checked") || {}).value;
       if (!choice) { $("saved").textContent = "Choose an option first"; return; }
-      decisions[h.id] = { choice, note: $("note").value.trim(), engineer: $("engineer").value.trim(), when: new Date().toISOString() };
+      decisions[h.id] = { choice, note: $("note").value.trim(), engineer: $("engineer").value.trim(), when: (d.when && choice === d.choice) ? d.when : new Date().toISOString() };
       saveDecisions();
       $("saved").textContent = C.detail.saved;
       renderList(filtered());
       renderCases();
+      renderToday();
     });
   }
 

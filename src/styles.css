@@ -92,6 +92,23 @@ h3 { font-size: 18px; margin: 20px 0 8px; }
 .summary li.lower { border-color: var(--lower); }
 .summary li.sensors { border-color: var(--accent); }
 
+/* Today: the officer's workflow, above the overview stats. One card for the
+   most urgent task (a border, not just a stripe, and a real button), the
+   rest as a short list so the page doesn't repeat the same tile three times. */
+#today { margin-bottom: 20px; }
+.today-hero { border: 2px solid var(--line); padding: 16px; margin-bottom: 10px; max-width: 480px; }
+.today-hero.due { border-color: var(--higher); }
+.today-hero .num { display: block; font-size: 40px; font-weight: 700; line-height: 1.1; }
+.today-hero p { margin: 0 0 12px; font-size: 18px; }
+.today-hero.clear p { margin: 0; color: var(--muted); }
+.today-minor { list-style: none; padding: 0; margin: 0 0 16px; display: flex; flex-direction: column; gap: 6px; color: var(--muted); }
+.today-minor .num { font-weight: 700; color: var(--ink); }
+.today-minor .link-button { padding: 0; }
+.quick-visit { border: 1px solid var(--line); padding: 12px; max-width: 420px; }
+.quick-visit h3 { margin: 0 0 4px; font-size: 16px; }
+.quick-visit input[type="text"] { font: inherit; padding: 6px 8px; border: 2px solid var(--ink); background: var(--surface); color: var(--ink); width: 100%; max-width: 220px; }
+.quick-visit button { margin-top: 8px; }
+
 /* Filters */
 .filters { display: flex; flex-wrap: wrap; gap: 12px 16px; align-items: flex-end; padding: 12px; border: 1px solid var(--line); margin-bottom: 20px; }
 .field { display: flex; flex-direction: column; gap: 4px; }
@@ -108,8 +125,6 @@ h3 { font-size: 18px; margin: 20px 0 8px; }
 .tabs [role="tab"]:hover { background: var(--soft); }
 .tabs [role="tab"][aria-selected="true"] { color: var(--ink); font-weight: 700; border-bottom-color: var(--ink); }
 @media (max-width: 480px) { .tabs [role="tab"] { flex: 1 1 100%; text-align: left; border-bottom: 0; border-left: 5px solid transparent; margin: 0; } .tabs [role="tab"][aria-selected="true"] { border-left-color: var(--ink); } }
-
-.notes-text { display: block; width: 100%; max-width: 720px; min-height: 320px; font: inherit; padding: 8px; border: 2px solid var(--ink); background: var(--surface); color: var(--ink); }
 
 /* Layout */
 .two-col { display: grid; grid-template-columns: 3fr 2fr; gap: 24px; margin-bottom: 28px; }

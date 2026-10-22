@@ -11,6 +11,25 @@ window.CONTENT = {
     sensors: "homes in the sensor pilot"
   },
 
+  today: {
+    heading: "Today",
+    allClear: "Nothing urgent today — you're all caught up.",
+    toReview: "higher-risk home{s} not yet reviewed", toReviewButton: "Review now",
+    toReviewNone: "No higher-risk homes waiting to be reviewed",
+    needsEngineer: "visit{s} booked with no engineer named yet", needsEngineerButton: "Add an engineer",
+    needsEngineerNone: "Every booked visit has an engineer named",
+    bookedToday: "visit{s} booked today", bookedTodayButton: "View visits",
+    bookedTodayNone: "No visits booked today yet",
+    quickVisit: {
+      heading: "Book a visit",
+      hint: "Know which home needs one? Jump straight to it.",
+      label: "Home reference",
+      placeholder: "For example, H0123",
+      button: "Find and book",
+      notFound: "No home with that reference. Check the letter and numbers, for example H0123."
+    }
+  },
+
   filters: {
     heading: "Show",
     area: "Area",
@@ -56,15 +75,7 @@ window.CONTENT = {
   tabs: {
     homes: "Homes to look at first",
     areas: "Area overview",
-    visits: "Engineer visits booked",
-    notes: "Notes"
-  },
-
-  notes: {
-    heading: "Notes",
-    hint: "Your own notes. They stay in this browser only. Don't write anyone's personal details here.",
-    label: "Your notes",
-    saved: "Saved"
+    visits: "Engineer visits booked"
   },
 
   list: {
