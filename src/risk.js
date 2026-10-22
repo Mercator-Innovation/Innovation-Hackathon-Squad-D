@@ -4,9 +4,9 @@
 
 window.RISK = {
   bands: [
-    { id: "higher", label: "Higher risk", min: 15 },
-    { id: "medium", label: "Medium risk", min: 9 },
-    { id: "lower", label: "Lower risk", min: 0 }
+    { id: "higher", label: "Higher risk", short: "High", min: 15 },
+    { id: "medium", label: "Medium risk", short: "Medium", min: 9 },
+    { id: "lower", label: "Lower risk", short: "Low", min: 0 }
   ],
 
   // "short" is a compact version of the label, for the priority list's narrow
