@@ -10,7 +10,8 @@
   const tenantByHome = {};
   D.tenants.forEach((t) => (tenantByHome[t.home] = t));
 
-  const decisions = loadDecisions();
+  // Example decisions first (data/cases.js), then anything saved in this browser on top
+  const decisions = Object.assign({}, D.cases || {}, loadDecisions());
 
   const homes = D.homes.map((h) => {
     const tenant = tenantByHome[h.id] || null;
