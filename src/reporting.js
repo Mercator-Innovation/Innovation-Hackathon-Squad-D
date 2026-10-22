@@ -15,7 +15,13 @@
     behind: "Needs attention",
     target: "Target",
     thisMonth: "This month (so far)",
-    healthNote: "Housing officers ask, with the household's agreement. Engineers never collect health information."
+    healthNote: "Housing officers ask, with the household's agreement. Engineers never collect health information.",
+    publishedHeading: "How this links to Cloch's published measures",
+    publishedHint: "Cloch's own figures, published for every Scottish social landlord. They cover the whole service, not just damp, so the tool can only help move them.",
+    publishedCols: ["Measure", "Cloch", "Scottish average", "How this tool can help"],
+    better: "Better than average",
+    worse: "Below average",
+    source: "Source:"
   };
 
   const C = window.CONTENT, D = window.DATA, $ = (id) => document.getElementById(id);
@@ -95,7 +101,29 @@
           <th scope="row">${m.month ? monthName(m.month) : esc(W.thisMonth)}</th>
           <td>${bar(m.higher, "higher")}</td><td>${bar(m.dpcUnknown, "dpcUnknown")}</td><td>${bar(m.visits, "visits")}</td>
         </tr>`).join("")}</tbody>
-      </table></div>`;
+      </table></div>
+      ${published()}`;
+  }
+
+  // Cloch's published figures (data/cloch-kpis.js), with what the tool could do for each
+  function published() {
+    const P = D.clochKpis;
+    if (!P) return "";
+    return `<h3>${esc(W.publishedHeading)}</h3>
+      <p class="hint">${esc(W.publishedHint)}</p>
+      <div class="table-wrap"><table class="kpi-published">
+        <thead><tr>${W.publishedCols.map((c) => `<th scope="col">${esc(c)}</th>`).join("")}</tr></thead>
+        <tbody>${P.measures.map((m) => {
+          const ahead = m.higherIsBetter ? m.cloch >= m.scotland : m.cloch <= m.scotland;
+          return `<tr class="${ahead ? "" : "behind"}">
+            <th scope="row">${esc(m.name)}</th>
+            <td>${m.cloch.toFixed(1)}${esc(m.unit)}<span class="kpi-compare">${ahead ? "✓ " + esc(W.better) : "! " + esc(W.worse)}</span></td>
+            <td>${m.scotland.toFixed(1)}${esc(m.unit)}</td>
+            <td>${esc(m.link)}</td>
+          </tr>`;
+        }).join("")}</tbody>
+      </table></div>
+      <p class="hint">${esc(W.source)} <a href="${esc(P.url)}">${esc(P.source)}</a></p>`;
   }
 
   function cards(items) {
