@@ -73,7 +73,7 @@ window.CONTENT = {
   list: {
     heading: "Homes to look at first",
     hint: "Homes at highest risk first.",
-    cols: ["Home", "Area", "Type", "Age", "Risk", "Top reasons", "Decision", ""],
+    cols: ["Home", "Area", "Type", "Age", "Risk", "Top reasons", ""],
     review: "Review",
     more: "Show 25 more",
     none: "No homes match. Try showing everything."
@@ -97,11 +97,9 @@ window.CONTENT = {
     whyMore: "View {n} more",
     whyFewer: "Show fewer",
     points: "points",
-    missing: "What's missing",
-    missingHint: "Information we don't have yet, and how to find it out.",
+    missing: "Information missing",
     missingTag: "Missing",
     notSharedTag: "Not shared",
-    nothingMissing: "Nothing missing. We have all the information we look for.",
     gaps: {
       vacant: { what: "Who lives here", next: "Nobody lives here at the moment. Check the home before someone moves in." },
       dpc: { what: "Damp-proof course", next: "Add a damp-proof course check to the next visit." },
