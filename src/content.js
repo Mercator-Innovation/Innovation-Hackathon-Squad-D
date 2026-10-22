@@ -30,12 +30,20 @@ window.CONTENT = {
 
   map: {
     heading: "Where the risk is",
-    hint: "Darker squares mean a higher average risk score. Select a dot to look at that home.",
+    hint: "Darker squares mean a higher average score for the layer you've picked. Select a dot to look at that home.",
     water: "The firth",
     showDots: "Show each home",
     legendLow: "Lower",
     legendHigh: "Higher",
-    madeUp: "Made-up map"
+    legendUnknown: "Most households here haven't told Cloch about their health",
+    madeUp: "Made-up map",
+    layer: "Map layer",
+    layerOptions: [
+      { id: "combined", label: "All factors combined" },
+      { id: "property", label: "The property: age, walls, energy, damp-proof course" },
+      { id: "household", label: "The household: health, age, income" }
+    ],
+    householdNote: "Striped squares mean fewer than half the households there have agreed to share whether anyone has a health condition, so the colour there is based on less information."
   },
 
   areas: {
