@@ -67,7 +67,7 @@
 body { margin: 0; font: 16px/1.5 var(--font); color: var(--ink); background: var(--bg); }
 main { max-width: 1200px; margin: 0 auto; padding: 16px; }
 
-.top-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; background: var(--banner-bg); padding-right: 16px; }
+.top-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; background: var(--banner-bg); padding-right: 16px; }
 .banner { background: var(--banner-bg); color: var(--banner-ink); padding: 8px 16px; font-size: 14px; }
 .theme-toggle { font: inherit; font-size: 14px; font-weight: 600; padding: 4px 12px; border: 2px solid var(--banner-ink); background: transparent; color: var(--banner-ink); cursor: pointer; white-space: nowrap; }
 .theme-toggle[aria-pressed="true"] { background: var(--banner-ink); color: var(--banner-bg); }
