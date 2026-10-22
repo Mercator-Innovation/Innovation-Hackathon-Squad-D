@@ -1,16 +1,57 @@
 /* Progress tab. Its own file so it doesn't clash with styles.css. */
-.kpis { list-style: none; padding: 0; margin: 0 0 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
-.kpis li { border-left: 6px solid var(--line); background: var(--soft); padding: 12px; }
-.kpis li.ok { border-color: var(--lower); }
-.kpis li.behind { border-color: var(--higher); }
-.kpis .num { display: block; font-size: 32px; font-weight: 700; line-height: 1.1; }
-.kpi-status { display: block; margin-top: 8px; color: var(--muted); }
-.kpi-status strong { color: var(--ink); }
+
+/* RAG colours: solid for pills, a light tint for card backgrounds. Text on each passes 4.5:1. */
+:root {
+  --rag-red: #b3261e;      --rag-red-ink: #ffffff;   --rag-red-tint: #fdecea;
+  --rag-amber: #f2b417;    --rag-amber-ink: #1d1d1b; --rag-amber-tint: #fff4d6;
+  --rag-green: #2e7d32;    --rag-green-ink: #ffffff; --rag-green-tint: #e7f3e8;
+  --rag-none: #4b5459;     --rag-none-ink: #ffffff;  --rag-none-tint: var(--soft);
+}
+:root[data-theme="dark"] {
+  --rag-red: #f28b82;      --rag-red-ink: #1d1d1b;   --rag-red-tint: #3a1d1b;
+  --rag-amber: #fdd663;    --rag-amber-ink: #1d1d1b; --rag-amber-tint: #3a2e10;
+  --rag-green: #81c995;    --rag-green-ink: #1d1d1b; --rag-green-tint: #17301e;
+  --rag-none: #b8c0c5;     --rag-none-ink: #1d1d1b;
+}
+
+/* Summary: how many red, amber and green */
+.rag-summary { list-style: none; padding: 0; margin: 0 0 24px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.rag-summary li { padding: 12px 16px; border-radius: 8px; font-weight: 700; }
+.rag-summary .num { display: block; font-size: 40px; line-height: 1.1; }
+@media (max-width: 480px) { .rag-summary { gap: 8px; } .rag-summary li { padding: 10px; font-size: 14px; } .rag-summary .num { font-size: 32px; } }
+.rag-summary .rag-red { background: var(--rag-red); color: var(--rag-red-ink); }
+.rag-summary .rag-amber { background: var(--rag-amber); color: var(--rag-amber-ink); }
+.rag-summary .rag-green { background: var(--rag-green); color: var(--rag-green-ink); }
+
+/* KPI cards */
+.kpis { list-style: none; padding: 0; margin: 0 0 28px; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.kpis li { --c: var(--rag-none); --c-ink: var(--rag-none-ink); --c-tint: var(--rag-none-tint);
+  display: flex; flex-direction: column; gap: 6px; padding: 14px 16px; border-radius: 8px;
+  background: var(--c-tint); border: 2px solid var(--c); border-top-width: 8px; color: var(--ink); }
+.kpis li.rag-red { --c: var(--rag-red); --c-ink: var(--rag-red-ink); --c-tint: var(--rag-red-tint); }
+.kpis li.rag-amber { --c: var(--rag-amber); --c-ink: var(--rag-amber-ink); --c-tint: var(--rag-amber-tint); }
+.kpis li.rag-green { --c: var(--rag-green); --c-ink: var(--rag-green-ink); --c-tint: var(--rag-green-tint); }
+.rag-pill { align-self: flex-start; padding: 2px 10px; border-radius: 999px; background: var(--c); color: var(--c-ink); font-weight: 700; font-size: 14px; }
+.kpis .num { font-size: 40px; font-weight: 800; line-height: 1.05; }
+.kpi-text { line-height: 1.4; }
+.kpi-meter { position: relative; display: block; height: 12px; margin: 4px 0 2px; border-radius: 6px; background: var(--bg); border: 1px solid var(--line); overflow: visible; }
+.kpi-meter i { display: block; height: 100%; border-radius: 6px; background: var(--c); }
+.kpi-meter b { position: absolute; top: -4px; bottom: -4px; width: 3px; margin-left: -1px; background: var(--ink); }
+.kpi-rules { font-size: 14px; color: var(--muted); }
+
+/* Month by month */
 .kpi-trend td { white-space: nowrap; }
-.kpi-bar { display: inline-block; width: 80px; height: 10px; margin-right: 8px; background: var(--line); vertical-align: middle; }
-.kpi-bar i { display: block; height: 100%; background: var(--ink); }
+.kpi-bar { display: inline-block; width: 80px; height: 12px; margin-right: 8px; border-radius: 6px; background: var(--soft); border: 1px solid var(--line); vertical-align: middle; overflow: hidden; }
+.kpi-bar i { display: block; height: 100%; background: var(--accent); }
+.kpi-bar.higher i { background: var(--rag-red); }
+.kpi-bar.dpcUnknown i { background: var(--rag-amber); }
+.kpi-change { margin-left: 8px; padding: 1px 8px; border-radius: 999px; font-size: 14px; font-weight: 700; }
+.kpi-change.good { background: var(--rag-green); color: var(--rag-green-ink); }
+.kpi-change.bad { background: var(--rag-red); color: var(--rag-red-ink); }
 @media (max-width: 480px) { .kpi-bar { width: 40px; } }
+
+/* Cloch's published measures */
 .kpi-published th[scope="row"] { font-weight: 600; }
-.kpi-published tr.behind th[scope="row"] { border-left: 6px solid var(--higher); padding-left: 8px; }
+.kpi-published tr.behind th[scope="row"] { border-left: 6px solid var(--rag-amber); padding-left: 8px; }
 .kpi-compare { display: block; font-size: 14px; color: var(--muted); white-space: nowrap; }
 .kpi-published tr.behind .kpi-compare { color: var(--ink); font-weight: 700; }
