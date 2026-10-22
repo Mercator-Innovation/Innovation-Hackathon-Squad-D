@@ -11,6 +11,25 @@ window.CONTENT = {
     sensors: "homes in the sensor pilot"
   },
 
+  today: {
+    heading: "Today",
+    toReview: "higher-risk homes not yet reviewed",
+    toReviewNone: "No higher-risk homes waiting to be reviewed",
+    needsEngineer: "visits booked with no engineer named yet",
+    needsEngineerNone: "Every booked visit has an engineer named",
+    bookedToday: "visits booked today",
+    bookedTodayNone: "No visits booked today yet",
+    goTo: "Go to",
+    quickVisit: {
+      heading: "Book a visit",
+      hint: "Know which home needs one? Jump straight to it.",
+      label: "Home reference",
+      placeholder: "For example, H0123",
+      button: "Find and book",
+      notFound: "No home with that reference. Check the letter and numbers, for example H0123."
+    }
+  },
+
   filters: {
     heading: "Show",
     area: "Area",

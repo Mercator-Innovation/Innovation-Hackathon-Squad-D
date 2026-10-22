@@ -41,11 +41,18 @@
   $("list-heading").textContent = C.list.heading;
   $("more").textContent = C.list.more;
   $("cases-heading").textContent = C.cases.heading;
+  $("today-heading").textContent = C.today.heading;
+  $("quick-visit-heading").textContent = C.today.quickVisit.heading;
+  $("quick-visit-hint").textContent = C.today.quickVisit.hint;
+  $("quick-visit-label").textContent = C.today.quickVisit.label;
+  $("quick-visit-id").placeholder = C.today.quickVisit.placeholder;
+  $("quick-visit-button").textContent = C.today.quickVisit.button;
   document.querySelector('label[for="show-dots"]').textContent = C.map.showDots;
   document.querySelector('label[for="show-pulse"]').textContent = C.map.pulse;
 
   setupFilters();
   setupTabs();
+  setupQuickVisit();
   render();
 
   // ---------- Tabs: one view at a time. Arrow keys move between tabs.
@@ -132,6 +139,7 @@
   function render() {
     const list = filtered();
     renderSummary(list);
+    renderToday();
     renderMap(list);
     renderAreas(list);
     renderList(list);
@@ -148,6 +156,48 @@
       ["sensors", list.filter((h) => h.sensor).length, C.summary.sensors]
     ];
     $("summary").innerHTML = items.map(([cls, n, text]) => `<li class="${cls}"><span class="num">${n}</span>${esc(text)}</li>`).join("");
+  }
+
+  // ---------- Today: a housing officer's workflow, not just a count of homes
+  function isToday(iso) {
+    const d = new Date(iso);
+    const now = new Date();
+    return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth() && d.getDate() === now.getDate();
+  }
+
+  function renderToday() {
+    const visitChoice = C.detail.options[0];
+    const visits = homes.filter((h) => decisions[h.id] && decisions[h.id].choice === visitChoice);
+    const T = C.today;
+    const tasks = [
+      { n: homes.filter((h) => h.risk.band.id === "higher" && !decisions[h.id]).length, text: T.toReview, none: T.toReviewNone, tab: "tab-homes", setup: () => { state.band = "higher"; state.unreviewed = true; $("f-band").value = "higher"; $("f-unreviewed").checked = true; state.shown = 25; } },
+      { n: visits.filter((h) => !decisions[h.id].engineer).length, text: T.needsEngineer, none: T.needsEngineerNone, tab: "tab-visits" },
+      { n: visits.filter((h) => decisions[h.id].when && isToday(decisions[h.id].when)).length, text: T.bookedToday, none: T.bookedTodayNone, tab: "tab-visits" }
+    ];
+    $("today-tasks").innerHTML = tasks.map((task, i) => `<li class="${task.n ? "due" : "clear"}">
+        <span class="num">${task.n}</span>${esc(task.n ? task.text : task.none)}
+        ${task.n ? `<button type="button" class="link-button" data-task="${i}">${esc(T.goTo)} ${esc(C.tabs[task.tab === "tab-homes" ? "homes" : "visits"])}</button>` : ""}
+      </li>`).join("");
+    $("today-tasks").querySelectorAll("button[data-task]").forEach((b) => b.addEventListener("click", () => {
+      const task = tasks[Number(b.dataset.task)];
+      if (task.setup) task.setup();
+      render();
+      showTab(task.tab);
+      $(task.tab).focus();
+    }));
+  }
+
+  // ---------- Quick visit: jump straight to a home by reference and start a visit
+  function setupQuickVisit() {
+    $("quick-visit").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const id = $("quick-visit-id").value.trim().toUpperCase();
+      const h = byId[id];
+      $("quick-visit-message").textContent = h ? "" : C.today.quickVisit.notFound;
+      if (!h) return;
+      $("quick-visit-id").value = "";
+      openDetail(id, { preselectVisit: true });
+    });
   }
 
   // ---------- Heat map
@@ -299,12 +349,13 @@
       const id = e.target.dataset.id;
       decisions[id] = Object.assign({}, decisions[id], { engineer: e.target.value.trim() });
       saveDecisions();
+      renderToday();
     }));
     $("cases-table").querySelectorAll("button[data-id]").forEach((b) => b.addEventListener("click", () => openDetail(b.dataset.id)));
   }
 
   // ---------- Detail for one home
-  function openDetail(id) {
+  function openDetail(id, opts) {
     const h = byId[id];
     if (!h) return;
     state.selected = id;
@@ -356,7 +407,8 @@
       : `<p>${esc(Cd.noReports)}</p>`;
 
     const d = decisions[h.id] || {};
-    const options = Cd.options.map((o, i) => `<div class="radio"><input type="radio" name="decision" id="opt-${i}" value="${esc(o)}"${d.choice === o ? " checked" : ""}><label for="opt-${i}">${esc(o)}</label></div>`).join("");
+    const preselect = opts && opts.preselectVisit && !d.choice ? Cd.options[0] : d.choice;
+    const options = Cd.options.map((o, i) => `<div class="radio"><input type="radio" name="decision" id="opt-${i}" value="${esc(o)}"${preselect === o ? " checked" : ""}><label for="opt-${i}">${esc(o)}</label></div>`).join("");
 
     $("detail").innerHTML = `
       <button type="button" class="link-button" id="close-detail">${esc(Cd.close)}</button>
@@ -412,11 +464,12 @@
       e.preventDefault();
       const choice = ($("decide").querySelector("input[name=decision]:checked") || {}).value;
       if (!choice) { $("saved").textContent = "Choose an option first"; return; }
-      decisions[h.id] = { choice, note: $("note").value.trim(), engineer: $("engineer").value.trim(), when: new Date().toISOString() };
+      decisions[h.id] = { choice, note: $("note").value.trim(), engineer: $("engineer").value.trim(), when: (d.when && choice === d.choice) ? d.when : new Date().toISOString() };
       saveDecisions();
       $("saved").textContent = C.detail.saved;
       renderList(filtered());
       renderCases();
+      renderToday();
     });
   }
 
