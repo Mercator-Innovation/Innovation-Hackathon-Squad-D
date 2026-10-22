@@ -141,12 +141,21 @@
   }
 
   // ---------- Summary
+  function withinDays(iso, days) {
+    const diff = (new Date() - new Date(iso)) / 86400000;
+    return diff >= 0 && diff < days;
+  }
+
   function renderSummary(list) {
-    const count = (id) => list.filter((h) => h.risk.band.id === id).length;
+    const now = new Date();
+    const thisMonth = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0");
+    const reviewedThisWeek = list.filter((h) => decisions[h.id] && decisions[h.id].when && withinDays(decisions[h.id].when, 7)).length;
+    const newReports = list.reduce((sum, h) => sum + h.reports.filter((r) => r.damp && r.month === thisMonth).length, 0);
+    const noContact = list.filter((h) => h.tenant && h.tenant.monthsSinceContact >= 12).length;
     const items = [
-      ["higher", count("higher"), C.summary.higher],
-      ["medium", count("medium"), C.summary.medium],
-      ["lower", count("lower"), C.summary.lower],
+      ["reviewed", reviewedThisWeek, C.summary.reviewedThisWeek],
+      ["reports", newReports, C.summary.newReports],
+      ["no-contact", noContact, C.summary.noContact],
       ["sensors", list.filter((h) => h.sensor).length, C.summary.sensors]
     ];
     $("summary").innerHTML = items.map(([cls, n, text]) => `<li class="${cls}"><span class="num">${n}</span>${esc(text)}</li>`).join("");
@@ -300,16 +309,18 @@
   function renderList(list) {
     const shown = list.slice(0, state.shown);
     $("list-hint").textContent = list.length ? C.list.hint.replace("{n}", shown.length).replace("{total}", list.length) : C.list.none;
-    const head = C.list.cols.map((c) => `<th scope="col">${c ? esc(c) : '<span class="visually-hidden">Actions</span>'}</th>`).join("");
+    const head = C.list.cols.map((c, i) => `<th scope="col"${i === 3 ? ' class="num"' : ""}>${c ? esc(c) : '<span class="visually-hidden">Actions</span>'}</th>`).join("");
     $("homes").innerHTML = `<thead><tr>${head}</tr></thead><tbody>` + shown.map((h) => {
-      const top = h.risk.reasons.slice().sort((a, b) => b.points - a.points).slice(0, 3);
+      // The Age column already shows when it was built, so don't repeat that reason here too
+      const top = h.risk.reasons.filter((r) => !/^Built /.test(r.short)).sort((a, b) => b.points - a.points).slice(0, 3);
       const d = decisions[h.id];
       return `<tr>
         <th scope="row">${h.id}</th>
         <td>${esc(h.area)}</td>
-        <td>${esc(h.type)}, ${h.built}</td>
+        <td>${esc(h.type)}</td>
+        <td class="num">${h.built}</td>
         <td><span class="badge ${h.risk.band.id}">${esc(h.risk.band.label)}</span></td>
-        <td><ul class="reasons">${top.map((r) => `<li>${esc(r.label)}</li>`).join("")}</ul></td>
+        <td><ul class="reasons">${top.map((r) => `<li>${esc(r.short)}</li>`).join("")}</ul></td>
         <td class="decision">${d ? esc(d.choice) : "Not reviewed"}</td>
         <td><button type="button" class="secondary" data-id="${h.id}" style="margin:0">${esc(C.list.review)} <span class="visually-hidden">${h.id}</span></button></td>
       </tr>`;
