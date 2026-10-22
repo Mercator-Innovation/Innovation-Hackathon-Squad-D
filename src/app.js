@@ -244,9 +244,13 @@
     // A pulsing ring sits behind the dot of each higher-risk home where someone may be more vulnerable
     const pulses = list.filter((h) => h.risk.band.id === "higher" && window.RISK.isVulnerable(h.tenant))
       .map((h) => `<circle class="pulse ${h.risk.band.id}" cx="${h.x}" cy="${h.y}" r="7" aria-hidden="true"></circle>`).join("");
-    const dots = list.map((h) => {
+    // Lowest risk drawn first, so higher-risk triangles sit on top
+    const dots = list.slice().reverse().map((h) => {
       const vulnerable = window.RISK.isVulnerable(h.tenant) ? ", someone may be more vulnerable" : "";
-      return `<circle class="dot ${h.risk.band.id}${state.selected === h.id ? " selected" : ""}" cx="${h.x}" cy="${h.y}" r="${state.selected === h.id ? 8 : 4}" data-id="${h.id}"><title>${h.id}, ${esc(h.area)}: ${esc(h.risk.band.label)} (${h.risk.score})${vulnerable}</title></circle>`;
+      const selected = state.selected === h.id;
+      const attrs = `class="dot ${h.risk.band.id}${selected ? " selected" : ""}" data-id="${h.id}"`;
+      const title = `<title>${h.id}, ${esc(h.area)}: ${esc(h.risk.band.label)} (${h.risk.score})${vulnerable}</title>`;
+      return marker(h.risk.band.id, h.x, h.y, selected ? 2 : 1, attrs, title);
     }).join("");
 
     const labels = D.areas.map((a) => `<text class="area-label" x="${a.x}" y="${a.y - 58}" text-anchor="middle">${esc(a.name)}</text>`).join("");
@@ -270,8 +274,22 @@
       [1, 2, 3, 4, 5].map((i) => `<span class="swatch" style="background:var(--heat-${i})"></span>`).join("") +
       `<span>${esc(C.map.legendHigh)}</span>` +
       (onHousehold ? `<span class="dot-key"><i class="hatch-swatch"></i>${esc(C.map.legendUnknown)}</span>` : "") +
-      window.RISK.bands.map((b) => `<span class="dot-key"><i style="background:var(--${b.id})"></i>${esc(b.label)}</span>`).join("") +
+      window.RISK.bands.map((b) => `<span class="dot-key"><svg class="shape-key" viewBox="-11 -12 22 20" width="20" height="18" aria-hidden="true">${marker(b.id, 0, 0, 1.2, `class="dot ${b.id}"`, "")}</svg>${esc(b.label)}</span>`).join("") +
       `<span class="dot-key pulse-key"><i></i>${esc(C.map.legendPulse)}</span>`;
+  }
+
+  // Each risk level has its own shape, so it never relies on colour:
+  // higher = solid triangle, medium = solid square, lower = hollow circle. size 1 is normal, 2 is the selected home.
+  function marker(band, x, y, size, attrs, title) {
+    if (band === "higher") {
+      const pts = [[x, y - 9 * size], [x + 8 * size, y + 5.5 * size], [x - 8 * size, y + 5.5 * size]].map((p) => p.join(",")).join(" ");
+      return `<polygon ${attrs} points="${pts}">${title}</polygon>`;
+    }
+    if (band === "medium") {
+      const s = 4.5 * size;
+      return `<rect ${attrs} x="${x - s}" y="${y - s}" width="${s * 2}" height="${s * 2}">${title}</rect>`;
+    }
+    return `<circle ${attrs} cx="${x}" cy="${y}" r="${4.5 * size}">${title}</circle>`;
   }
 
   // ---------- Areas table
