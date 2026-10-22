@@ -10,3 +10,7 @@
 .kpi-bar { display: inline-block; width: 80px; height: 10px; margin-right: 8px; background: var(--line); vertical-align: middle; }
 .kpi-bar i { display: block; height: 100%; background: var(--ink); }
 @media (max-width: 480px) { .kpi-bar { width: 40px; } }
+.kpi-published th[scope="row"] { font-weight: 600; }
+.kpi-published tr.behind th[scope="row"] { border-left: 6px solid var(--higher); padding-left: 8px; }
+.kpi-compare { display: block; font-size: 14px; color: var(--muted); white-space: nowrap; }
+.kpi-published tr.behind .kpi-compare { color: var(--ink); font-weight: 700; }
