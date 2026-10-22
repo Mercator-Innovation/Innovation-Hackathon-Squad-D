@@ -410,8 +410,11 @@
       ? `<ul class="missing-list">${gaps.map((g) => `<li>${g.shared ? notSharedTag : missingTag}<strong>${esc(g.what)}:</strong> ${esc(g.next)}</li>`).join("")}</ul>`
       : `<p>${esc(Cd.nothingMissing)}</p>`;
 
-    const why = r.reasons.slice().sort((a, b) => b.points - a.points)
-      .map((x) => `<li><span class="pts">+${x.points}</span> ${esc(x.label)} <span class="group">(${esc(x.group)})</span></li>`).join("");
+    // At most 5, so a home with many small factors doesn't read as an unreadable wall of reasons
+    const sortedReasons = r.reasons.slice().sort((a, b) => b.points - a.points);
+    const why = sortedReasons.slice(0, 5)
+      .map((x) => `<li><span class="pts">+${x.points}</span> ${esc(x.label)} <span class="group">(${esc(x.group)})</span></li>`).join("")
+      + (sortedReasons.length > 5 ? `<li class="why-more">${esc(Cd.whyMore.replace("{n}", sortedReasons.length - 5))}</li>` : "");
 
     const household = t ? `<p class="privacy">${esc(Cd.householdNote)}</p><dl>
         <dt>People</dt><dd>${t.people}</dd>
