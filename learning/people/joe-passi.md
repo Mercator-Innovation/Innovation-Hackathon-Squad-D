@@ -36,6 +36,7 @@ ai_use_week_after:
 - Pulled all my research into a one-page summary doc for the squad, "Healthier homes: what Joe found" (https://claude.ai/artifact/KfKfeaPv2LNDcPDLHcMyfG). Prompts: "summarise my findings", then "yes, make the one-page summary"
 - Designed and built a rough working screen, outside my usual job: a "damp data check" that pulls together made-up data about each home, shows what's missing and what to do next, and lists signs of damp risk with reasons rather than a score (sketches/damp-data-gaps-sketch.html). It fits the idea the squad agreed. Prompts: "Could we create a service that automatically pulls existing relevant, damp-related data and highlight what information is missing?", then "yes, sketch a rough screen"
 - Changed the live prototype, outside my usual job: made the Review page one column and added a highlighted "What's missing" box with next steps, plus "Missing" and "Not shared" labels in the details, based on my sketch. Faye changed the same styles file at the same time, but it merged cleanly. Prompt: "ideally the Review page should only be in one column of text then you can add and highlight the missing data similar to my sketch"
+- Added made-up example cases (engineers, notes, decisions) so Freya's "Visits booked" screen has something to show. Squad working: Claude spotted the engineer view was still on Freya's branch and would clash, so we waited for her to share first, then built on top. Prompt: "Can you add dummy data into the engineer view?"
 
 ## At 19:00
 - What I worked on: <answers>
