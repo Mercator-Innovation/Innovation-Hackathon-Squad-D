@@ -9,39 +9,41 @@ window.RISK = {
     { id: "lower", label: "Lower risk", min: 0 }
   ],
 
+  // "short" is a compact version of the label, for the priority list's narrow
+  // "Top reasons" column. The full "label" still shows in a home's detail.
   rules: [
     // The home
-    { group: "Home", points: 3, label: "Built before 1920", test: (h) => h.built < 1920 },
-    { group: "Home", points: 2, label: "Built 1920 to 1964", test: (h) => h.built >= 1920 && h.built < 1965 },
-    { group: "Home", points: 1, label: "Built 1965 to 1989", test: (h) => h.built >= 1965 && h.built < 1990 },
-    { group: "Home", points: 2, label: "Solid walls with no insulation", test: (h) => h.walls === "Solid stone" || h.walls === "Solid brick" },
-    { group: "Home", points: 1, label: "Concrete panel or uninsulated cavity walls", test: (h) => h.walls === "Concrete panel" || h.walls === "Cavity, not insulated" },
-    { group: "Home", points: 2, label: "Energy rating E, F or G", test: (h) => "EFG".includes(h.epc) },
-    { group: "Home", points: 1, label: "Energy rating D", test: (h) => h.epc === "D" },
-    { group: "Home", points: 2, label: "No ventilation", test: (h) => h.ventilation === "None" },
-    { group: "Home", points: 1, label: "Only partial ventilation", test: (h) => h.ventilation === "Bathroom fan only" || h.ventilation === "Trickle vents" },
-    { group: "Home", points: 1, label: (h) => "Exposed: " + h.exposure.toLowerCase(), test: (h) => h.exposure !== "Sheltered" },
-    { group: "Home", points: 2, label: "Damp-proof course failed or cracked", test: (h) => /failed|cracked/.test(h.dpc) },
-    { group: "Home", points: 1, label: "Damp-proof course not known", test: (h) => h.dpc === "Unknown" },
+    { group: "Home", points: 3, label: "Built before 1920", short: "Built before 1920", test: (h) => h.built < 1920 },
+    { group: "Home", points: 2, label: "Built 1920 to 1964", short: "Built 1920–1964", test: (h) => h.built >= 1920 && h.built < 1965 },
+    { group: "Home", points: 1, label: "Built 1965 to 1989", short: "Built 1965–1989", test: (h) => h.built >= 1965 && h.built < 1990 },
+    { group: "Home", points: 2, label: "Solid walls with no insulation", short: "Uninsulated solid walls", test: (h) => h.walls === "Solid stone" || h.walls === "Solid brick" },
+    { group: "Home", points: 1, label: "Concrete panel or uninsulated cavity walls", short: "Poor wall insulation", test: (h) => h.walls === "Concrete panel" || h.walls === "Cavity, not insulated" },
+    { group: "Home", points: 2, label: "Energy rating E, F or G", short: "EPC E, F or G", test: (h) => "EFG".includes(h.epc) },
+    { group: "Home", points: 1, label: "Energy rating D", short: "EPC D", test: (h) => h.epc === "D" },
+    { group: "Home", points: 2, label: "No ventilation", short: "No ventilation", test: (h) => h.ventilation === "None" },
+    { group: "Home", points: 1, label: "Only partial ventilation", short: "Partial ventilation", test: (h) => h.ventilation === "Bathroom fan only" || h.ventilation === "Trickle vents" },
+    { group: "Home", points: 1, label: (h) => "Exposed: " + h.exposure.toLowerCase(), short: (h) => "Exposed: " + h.exposure.toLowerCase(), test: (h) => h.exposure !== "Sheltered" },
+    { group: "Home", points: 2, label: "Damp-proof course failed or cracked", short: "DPC failed or cracked", test: (h) => /failed|cracked/.test(h.dpc) },
+    { group: "Home", points: 1, label: "Damp-proof course not known", short: "DPC not known", test: (h) => h.dpc === "Unknown" },
 
     // What's been reported
-    { group: "Reports", points: 4, label: "Damp or mould reported 2 or more times in the last 3 years", test: (h) => dampSince(h, "2023-10") >= 2 },
-    { group: "Reports", points: 2, label: "Damp or mould reported in the last 3 years", test: (h) => dampSince(h, "2023-10") === 1 },
-    { group: "Reports", points: 1, label: "Damp or mould reported 3 to 5 years ago", test: (h) => dampSince(h, "2023-10") === 0 && dampSince(h, "0000") > 0 },
+    { group: "Reports", points: 4, label: "Damp or mould reported 2 or more times in the last 3 years", short: "Damp reported 2+ times", test: (h) => dampSince(h, "2023-10") >= 2 },
+    { group: "Reports", points: 2, label: "Damp or mould reported in the last 3 years", short: "Damp reported recently", test: (h) => dampSince(h, "2023-10") === 1 },
+    { group: "Reports", points: 1, label: "Damp or mould reported 3 to 5 years ago", short: "Damp reported, 3–5y ago", test: (h) => dampSince(h, "2023-10") === 0 && dampSince(h, "0000") > 0 },
 
     // The sensor pilot
-    { group: "Sensor", points: 4, label: "Air damp (70% or more) over half the week", test: (h, t, s) => s && s.dampShare >= 0.5 },
-    { group: "Sensor", points: 2, label: "Air damp (70% or more) a quarter of the week", test: (h, t, s) => s && s.dampShare >= 0.25 && s.dampShare < 0.5 },
-    { group: "Sensor", points: 2, label: "Home averages under 16°C", test: (h, t, s) => s && s.avgTemp < 16 },
+    { group: "Sensor", points: 4, label: "Air damp (70% or more) over half the week", short: "Air damp over half the week", test: (h, t, s) => s && s.dampShare >= 0.5 },
+    { group: "Sensor", points: 2, label: "Air damp (70% or more) a quarter of the week", short: "Air damp a quarter of the week", test: (h, t, s) => s && s.dampShare >= 0.25 && s.dampShare < 0.5 },
+    { group: "Sensor", points: 2, label: "Home averages under 16°C", short: "Cold home, under 16°C", test: (h, t, s) => s && s.avgTemp < 16 },
 
     // The household (only what the household has told us)
-    { group: "Household", points: 2, label: "Child under 5", test: (h, t) => t && t.under5 },
-    { group: "Household", points: 2, label: "Someone over 75", test: (h, t) => t && t.over75 },
-    { group: "Household", points: 3, label: "Breathing condition (shared with consent)", test: (h, t) => t && t.breathing === true },
-    { group: "Household", points: 1, label: "Other health condition or disability", test: (h, t) => t && (t.otherHealth === true || t.disability) },
-    { group: "Household", points: 2, label: "May struggle to afford heating (prepayment meter or arrears)", test: (h, t) => t && (t.prepayment || t.arrears) },
-    { group: "Household", points: 1, label: "Low income", test: (h, t) => t && t.lowIncome && !t.prepayment && !t.arrears },
-    { group: "Household", points: 1, label: "No contact for over a year", test: (h, t) => t && t.monthsSinceContact >= 12 }
+    { group: "Household", points: 2, label: "Child under 5", short: "Child under 5", test: (h, t) => t && t.under5 },
+    { group: "Household", points: 2, label: "Someone over 75", short: "Someone over 75", test: (h, t) => t && t.over75 },
+    { group: "Household", points: 3, label: "Breathing condition (shared with consent)", short: "Breathing condition", test: (h, t) => t && t.breathing === true },
+    { group: "Household", points: 1, label: "Other health condition or disability", short: "Health condition or disability", test: (h, t) => t && (t.otherHealth === true || t.disability) },
+    { group: "Household", points: 2, label: "May struggle to afford heating (prepayment meter or arrears)", short: "May struggle to afford heating", test: (h, t) => t && (t.prepayment || t.arrears) },
+    { group: "Household", points: 1, label: "Low income", short: "Low income", test: (h, t) => t && t.lowIncome && !t.prepayment && !t.arrears },
+    { group: "Household", points: 1, label: "No contact for over a year", short: "No contact over a year", test: (h, t) => t && t.monthsSinceContact >= 12 }
   ]
 };
 
@@ -63,7 +65,8 @@ window.RISK.assess = function (home, tenant, sensor) {
       reasons.push({
         group: rule.group,
         points: rule.points,
-        label: typeof rule.label === "function" ? rule.label(home) : rule.label
+        label: typeof rule.label === "function" ? rule.label(home) : rule.label,
+        short: typeof rule.short === "function" ? rule.short(home) : rule.short
       });
     }
   }
