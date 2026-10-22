@@ -88,8 +88,8 @@ window.CONTENT = {
     engineerHint: "e.g. Pat Nguyen",
     visitType: "Visit type",
     nothingMissing: "Nothing missing — just confirm what's already known",
-    addPhoto: "Add photo",
-    viewPhoto: "Photo {n} from the visit to {home}. Opens full size in a new tab.",
+    evidenceCount: "{n} photo{s} on file",
+    noEvidence: "No evidence uploaded",
     review: "Open"
   },
 
@@ -137,6 +137,10 @@ window.CONTENT = {
       "Installing a sensor",
       "Urgent visit"
     ],
+    evidence: "Evidence",
+    noEvidence: "No photos yet",
+    addPhoto: "Add photo",
+    viewPhoto: "Photo {n} from this visit. Opens full size in a new tab.",
     note: "Note (optional)",
     save: "Confirm",
     saved: "Engineer booked"
