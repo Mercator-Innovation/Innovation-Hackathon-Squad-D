@@ -31,6 +31,7 @@ ai_use_week_after:
 <!-- Claude adds one line per moment: prompts that worked (word for word), dead ends, surprises, things done outside my usual job, what made working as a squad easier or harder -->
 - Did research outside my usual job: found that about 1 in 7 social renters in Scotland have no home internet, and that other landlords reach offline tenants by spotting damp on visits that already happen, using data to choose who to visit first, and "Home MOTs" (all English examples; no Scottish one found). Prompt: "yes, look at how others reach offline tenants"
 - More research: property features linked to damp and mould are age, solid walls, cold surfaces with poor ventilation, exposure to rain and wind, and a failed damp-proof course; condensation is the most common kind (about 8% of Scottish homes). No good evidence found on flats versus houses or EPC ratings. Prompt: "what characteristics of a property would affect their risk of damp and mould?"
+- Made a dataset, outside my usual job: 12 made-up example homes based on the damp research, shared in sketches/example-homes.md for the squad to build with. Prompt: "make the list of made-up example homes"
 
 ## At 19:00
 - What I worked on: <answers>
