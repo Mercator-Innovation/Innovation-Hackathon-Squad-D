@@ -53,6 +53,12 @@ window.CONTENT = {
     cols: ["Area", "Setting", "Homes", "Higher risk", "Share at higher risk", "Average score", "Sensors"]
   },
 
+  tabs: {
+    homes: "Homes to look at first",
+    areas: "Area overview",
+    visits: "Engineer visits booked"
+  },
+
   list: {
     heading: "Homes to look at first",
     hint: "Sorted by score, highest first. Showing the top {n} of {total}.",
@@ -63,7 +69,7 @@ window.CONTENT = {
   },
 
   cases: {
-    heading: "Visits booked",
+    heading: "Engineer visits booked",
     hint: "{n} homes booked for a visit.",
     none: "No visits booked yet. Choose “Visit and check the home” on a home to add one here.",
     cols: ["Home", "Area", "Engineer", "What to log on this visit", ""],
