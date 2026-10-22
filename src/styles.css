@@ -104,15 +104,22 @@ button.secondary { background: #fff; color: var(--accent); margin-top: 12px; }
 
 /* Detail */
 .detail { border: 2px solid var(--ink); padding: 16px 20px; margin: 24px 0; }
-.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 32px; }
-@media (max-width: 760px) { .detail-grid { grid-template-columns: 1fr; } }
+/* One column, at a comfortable reading width */
+.detail-column { max-width: 720px; }
 .detail dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px 16px; margin: 0; }
 .detail dt { font-weight: 600; }
 .detail dd { margin: 0; }
 .why li { margin-bottom: 4px; }
 .why .pts { font-weight: 700; }
 .why .group { color: var(--muted); font-size: 14px; }
-.unknowns { background: var(--soft); border-left: 5px solid var(--line); padding: 8px 12px 8px 28px; }
+/* Missing information: a pale yellow highlight plus a "Missing" tag, so it never relies on colour alone */
+.missing-box { background: #fff4d6; border-left: 6px solid #8a5a00; padding: 4px 16px 12px; margin: 20px 0; }
+.missing-box h3 { margin-top: 12px; }
+.missing-list { margin: 0; padding-left: 0; list-style: none; }
+.missing-list li { margin-bottom: 8px; }
+.tag { display: inline-block; font-size: 13px; font-weight: 700; padding: 0 6px; border: 2px solid #8a5a00; color: #6b4600; background: #fff; margin-right: 6px; }
+.detail dt.missing, .detail dd.missing { background: #fff4d6; }
+.detail dd.missing { padding-left: 4px; }
 .score-line { font-size: 20px; margin: 4px 0 12px; }
 .chart svg { width: 100%; height: auto; border: 1px solid var(--line); }
 .chart .hum { fill: none; stroke: var(--accent); stroke-width: 2; }
