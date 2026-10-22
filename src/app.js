@@ -460,7 +460,6 @@
       : `<p>${esc(Cd.noReports)}</p>`;
 
     const d = decisions[h.id] || {};
-    const options = Cd.options.map((o, i) => `<div class="radio"><input type="radio" name="decision" id="opt-${i}" value="${esc(o)}"${d.choice === o ? " checked" : ""}><label for="opt-${i}">${esc(o)}</label></div>`).join("");
 
     $("detail").innerHTML = `
       <button type="button" class="link-button" id="close-detail">${esc(Cd.close)}</button>
@@ -491,13 +490,9 @@
           <h3>${esc(Cd.household)}</h3>
           ${household}
           <form id="decide">
-            <fieldset>
-              <legend><h3 style="margin:16px 0 0">${esc(Cd.decide)}</h3></legend>
-              <p class="hint">${esc(Cd.decideHint)}</p>
-              ${options}
-            </fieldset>
+            <h3>${esc(Cd.decide)}</h3>
             <label for="engineer" style="font-weight:600;display:block">${esc(Cd.engineer)}</label>
-            <input type="text" id="engineer" value="${esc(d.engineer || "")}" placeholder="${esc(Cd.engineerHint)}">
+            <input type="text" id="engineer" autocomplete="off" value="${esc(d.engineer || "")}" placeholder="${esc(Cd.engineerHint)}">
             <label for="visit-type" style="font-weight:600;display:block">${esc(Cd.visitType)}</label>
             <select id="visit-type">${Cd.visitTypeOptions.map((o) => `<option value="${esc(o)}"${(d.visitType || Cd.visitTypeOptions[0]) === o ? " selected" : ""}>${esc(o)}</option>`).join("")}</select>
             <label for="note" style="font-weight:600;display:block">${esc(Cd.note)}</label>
@@ -513,8 +508,9 @@
     $("close-detail").addEventListener("click", closeDetail);
     $("decide").addEventListener("submit", (e) => {
       e.preventDefault();
-      const choice = ($("decide").querySelector("input[name=decision]:checked") || {}).value;
-      if (!choice) { $("saved").textContent = "Choose an option first"; return; }
+      // Confirming books an engineer visit, so the home shows in "Engineer visits booked"
+      const choice = Cd.options[0];
+      if (!$("engineer").value.trim()) { $("saved").textContent = Cd.engineerMissing; $("engineer").focus(); return; }
       decisions[h.id] = { choice, note: $("note").value.trim(), engineer: $("engineer").value.trim(), visitType: $("visit-type").value, when: (d.when && choice === d.choice) ? d.when : new Date().toISOString() };
       saveDecisions();
       $("saved").textContent = C.detail.saved;
