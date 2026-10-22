@@ -43,7 +43,7 @@ The **squad lead** runs the squad's setup before the day: agreeing the two roles
 
 ## Links
 
-- Discovery Wall (optional): _(added if the squad makes one)_
+- Discovery Wall: https://claude.ai/artifact/6q72BvUnaQVEoSrfiBGvMm (made from the paper notes in `sketches/paper-notes/`)
 
 ## Working agreements
 
