@@ -5,6 +5,7 @@
   const $ = (id) => document.getElementById(id);
   const W = 1000, H = 600, CELL = 40; // the made-up map, and the size of each heat map square
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const plural = (n, text) => text.replace("{s}", n === 1 ? "" : "s");
 
   // ---------- Join the data and score every home
   const tenantByHome = {};
@@ -126,7 +127,7 @@
       (!state.coast || h.coast === state.coast) &&
       (!state.band || h.risk.band.id === state.band) &&
       (!state.sensorOnly || h.sensor) &&
-      (!state.unreviewed || !decisions[h.id]) &&
+      (!state.unreviewed || !(decisions[h.id] && decisions[h.id].choice)) &&
       (!q || h.id.includes(q)));
   }
 
@@ -172,9 +173,8 @@
     const visitChoice = C.detail.options[0];
     const visits = homes.filter((h) => decisions[h.id] && decisions[h.id].choice === visitChoice);
     const T = C.today;
-    const plural = (n, text) => text.replace("{s}", n === 1 ? "" : "s");
     const tasks = [
-      { n: homes.filter((h) => h.risk.band.id === "higher" && !decisions[h.id]).length, text: T.toReview, none: T.toReviewNone, button: T.toReviewButton, tab: "tab-homes", setup: () => { state.band = "higher"; state.unreviewed = true; $("f-band").value = "higher"; $("f-unreviewed").checked = true; state.shown = 25; } },
+      { n: homes.filter((h) => h.risk.band.id === "higher" && !(decisions[h.id] && decisions[h.id].choice)).length, text: T.toReview, none: T.toReviewNone, button: T.toReviewButton, tab: "tab-homes", setup: () => { state.band = "higher"; state.unreviewed = true; $("f-band").value = "higher"; $("f-unreviewed").checked = true; state.shown = 25; } },
       { n: visits.filter((h) => !decisions[h.id].engineer).length, text: T.needsEngineer, none: T.needsEngineerNone, button: T.needsEngineerButton, tab: "tab-visits" },
       { n: visits.filter((h) => decisions[h.id].when && isToday(decisions[h.id].when)).length, text: T.bookedToday, none: T.bookedTodayNone, button: T.bookedTodayButton, tab: "tab-visits" }
     ].map((t) => Object.assign(t, { text: plural(t.n, t.text) }));
@@ -339,7 +339,7 @@
         <td class="num">${h.built}</td>
         <td><span class="badge ${h.risk.band.id}">${esc(h.risk.band.label)}</span></td>
         <td><ul class="reasons">${top.map((r) => `<li>${esc(r.short)}</li>`).join("")}</ul></td>
-        <td class="decision">${d ? esc(d.choice) : "Not reviewed"}</td>
+        <td class="decision">${d && d.choice ? esc(d.choice) : "Not reviewed"}</td>
         <td><button type="button" class="secondary" data-id="${h.id}" style="margin:0">${esc(C.list.review)} <span class="visually-hidden">${h.id}</span></button></td>
       </tr>`;
     }).join("") + "</tbody>";
@@ -372,10 +372,7 @@
           <select id="type-${h.id}" data-id="${h.id}">${C.detail.visitTypeOptions.map((o) => `<option value="${esc(o)}"${(d.visitType || C.detail.visitTypeOptions[0]) === o ? " selected" : ""}>${esc(o)}</option>`).join("")}</select>
         </td>
         <td><ul class="reasons">${missing}</ul></td>
-        <td>
-          <ul class="photos">${(d.photos || []).map((src, i) => `<li><a href="${src}" target="_blank" rel="noopener"><img src="${src}" alt="${esc(C.cases.viewPhoto.replace("{n}", i + 1).replace("{home}", h.id))}"></a></li>`).join("")}</ul>
-          <label class="link-button photo-upload">${esc(C.cases.addPhoto)}<input type="file" accept="image/*" multiple data-id="${h.id}" class="visually-hidden"></label>
-        </td>
+        <td>${(d.photos || []).length ? esc(plural(d.photos.length, C.cases.evidenceCount).replace("{n}", d.photos.length)) : esc(C.cases.noEvidence)}</td>
         <td><button type="button" class="secondary" data-id="${h.id}" style="margin:0">${esc(C.cases.review)} <span class="visually-hidden">${h.id}</span></button></td>
       </tr>`;
     }).join("") + "</tbody>";
@@ -390,14 +387,6 @@
       const id = e.target.dataset.id;
       decisions[id] = Object.assign({}, decisions[id], { visitType: e.target.value });
       saveDecisions();
-    }));
-    $("cases-table").querySelectorAll("input[type=file][data-id]").forEach((inp) => inp.addEventListener("change", async (e) => {
-      const id = e.target.dataset.id;
-      const thumbs = await Promise.all(Array.from(e.target.files).map((f) => photoThumbnail(f)));
-      const existing = (decisions[id] && decisions[id].photos) || [];
-      decisions[id] = Object.assign({}, decisions[id], { photos: existing.concat(thumbs) });
-      saveDecisions();
-      renderCases();
     }));
     $("cases-table").querySelectorAll("button[data-id]").forEach((b) => b.addEventListener("click", () => openDetail(b.dataset.id)));
   }
@@ -442,6 +431,14 @@
       $("why-list").innerHTML = shown.map(reasonLi).join("")
         + (sortedReasons.length > 5 ? `<li class="why-more"><button type="button" class="link-button" id="why-toggle">${esc(whyExpanded ? Cd.whyFewer : Cd.whyMore.replace("{n}", sortedReasons.length - 5))}</button></li>` : "");
       if ($("why-toggle")) $("why-toggle").addEventListener("click", () => { whyExpanded = !whyExpanded; renderWhyList(); });
+    };
+
+    // Evidence: photos an engineer attaches to this visit, kept in this browser
+    const renderEvidence = () => {
+      const photos = (decisions[h.id] && decisions[h.id].photos) || [];
+      $("evidence-list").innerHTML = photos.length
+        ? photos.map((src, i) => `<li><a href="${src}" target="_blank" rel="noopener"><img src="${src}" alt="${esc(Cd.viewPhoto.replace("{n}", i + 1))}"></a></li>`).join("")
+        : `<li class="hint">${esc(Cd.noEvidence)}</li>`;
     };
 
     const household = t ? `<p class="privacy">${esc(Cd.householdNote)}</p><dl>
@@ -509,7 +506,10 @@
             <input type="text" id="engineer" value="${esc(d.engineer || "")}" placeholder="${esc(Cd.engineerHint)}">
             <label for="visit-type" style="font-weight:600;display:block">${esc(Cd.visitType)}</label>
             <select id="visit-type">${Cd.visitTypeOptions.map((o) => `<option value="${esc(o)}"${(d.visitType || Cd.visitTypeOptions[0]) === o ? " selected" : ""}>${esc(o)}</option>`).join("")}</select>
-            <label for="note" style="font-weight:600;display:block">${esc(Cd.note)}</label>
+            <h4 style="font-weight:600;margin:16px 0 4px">${esc(Cd.evidence)}</h4>
+            <ul class="photos" id="evidence-list"></ul>
+            <label class="link-button photo-upload">${esc(Cd.addPhoto)}<input type="file" accept="image/*" multiple id="evidence-upload" class="visually-hidden"></label>
+            <label for="note" style="font-weight:600;display:block;margin-top:16px">${esc(Cd.note)}</label>
             <textarea id="note">${esc(d.note || "")}</textarea>
             <p><button type="submit" class="primary">${esc(Cd.save)}</button><span class="saved" id="saved" aria-live="polite"></span></p>
           </form>
@@ -519,6 +519,15 @@
     $("detail").scrollIntoView({ behavior: "smooth", block: "start" });
 
     renderWhyList();
+    renderEvidence();
+    $("evidence-upload").addEventListener("change", async (e) => {
+      const thumbs = await Promise.all(Array.from(e.target.files).map((f) => photoThumbnail(f)));
+      const existing = (decisions[h.id] && decisions[h.id].photos) || [];
+      decisions[h.id] = Object.assign({}, decisions[h.id], { photos: existing.concat(thumbs) });
+      saveDecisions();
+      renderEvidence();
+      renderCases();
+    });
     $("close-detail").addEventListener("click", closeDetail);
     $("decide").addEventListener("submit", (e) => {
       e.preventDefault();
