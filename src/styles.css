@@ -234,6 +234,12 @@ textarea { font: inherit; width: 100%; max-width: 500px; min-height: 70px; borde
 #cases .reasons { font-size: 14px; }
 .photos { list-style: none; padding: 0; margin: 0 0 6px; display: flex; flex-wrap: wrap; gap: 4px; }
 .photos img { width: 48px; height: 48px; object-fit: cover; border: 1px solid var(--line); display: block; }
+.photo-thumb { padding: 0; border: 0; background: none; cursor: zoom-in; }
+
+.lightbox { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 32px; }
+.lightbox img { max-width: 100%; max-height: 90vh; display: block; }
+.lightbox-close { position: absolute; top: 16px; right: 16px; font: inherit; font-weight: 700; padding: 8px 16px; background: var(--surface); color: var(--ink); border: 2px solid var(--surface); cursor: pointer; }
+.lightbox-close:focus-visible { outline: 3px solid var(--focus); outline-offset: 0; }
 .photo-upload { cursor: pointer; white-space: nowrap; }
 .saved { color: var(--ok-ink); font-weight: 700; margin-left: 12px; }
 .privacy { font-size: 14px; color: var(--muted); }
