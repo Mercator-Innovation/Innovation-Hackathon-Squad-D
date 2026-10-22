@@ -130,6 +130,10 @@ legend { font-weight: 700; margin-bottom: 4px; }
 .radio { display: flex; gap: 8px; align-items: center; margin: 6px 0; }
 .radio input { width: 20px; height: 20px; margin: 0; }
 textarea { font: inherit; width: 100%; max-width: 500px; min-height: 70px; border: 2px solid var(--ink); padding: 6px; }
+#engineer, #cases input[type="text"] { font: inherit; padding: 6px 8px; border: 2px solid var(--ink); margin-bottom: 12px; }
+#engineer { width: 100%; max-width: 300px; }
+#cases input[type="text"] { width: 100%; min-width: 140px; margin-bottom: 0; }
+#cases .reasons { font-size: 14px; }
 .saved { color: var(--lower); font-weight: 700; margin-left: 12px; }
 .privacy { font-size: 14px; color: var(--muted); }
 
