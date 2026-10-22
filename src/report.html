@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Report what you found (prototype)</title>
+  <style>
+    :root {
+      /* --line is #767676, not the officer view's #b1b4b6: that one is only 2.1:1 against white,
+         below the 3:1 WCAG 1.4.11 minimum for a UI component boundary like this page's choice rows. */
+      --ink: #1d1d1b; --muted: #4b5459; --line: #767676; --bg: #ffffff; --soft: #f3f2f1;
+      --accent: #1d5f8a; --focus: #ffdd00; --good: #2f6b3c; --warn: #b45309; --urgent: #a4161a;
+      --font: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    html, body { height: 100%; }
+    /* 17px base (well above 16px) so iOS Safari never auto-zooms when a field is focused */
+    body { margin: 0; font: 17px/1.5 var(--font); color: var(--ink); background: var(--soft); -webkit-tap-highlight-color: transparent; }
+    .app { max-width: 480px; min-height: 100%; margin: 0 auto; background: var(--bg); display: flex; flex-direction: column; }
+    /* Safe-area padding keeps content clear of a notch or the home indicator on iOS/Android */
+    .banner { background: var(--ink); color: #fff; padding: 10px 16px; padding-top: calc(10px + env(safe-area-inset-top)); font-size: 14px; }
+    h1 { font-size: 24px; line-height: 1.2; margin: 4px 0 4px; }
+    h2 { font-size: 18px; margin: 20px 0 8px; }
+    .lead { color: var(--muted); margin: 0 0 20px; }
+    :focus-visible { outline: 3px solid var(--focus); outline-offset: 0; box-shadow: 0 0 0 6px var(--ink); }
+    .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+    /* App bar: back button + step progress, like a native screen header */
+    .appbar { display: flex; align-items: center; gap: 10px; padding: calc(10px + env(safe-area-inset-top)) 12px 10px; border-bottom: 1px solid var(--line); min-height: 48px; }
+    /* 44x44pt is Apple's own minimum tap target; Material's is 48x48dp, so 44px here is the tighter of the two */
+    .appbar .back { font: inherit; font-weight: 600; background: none; border: 0; color: var(--accent); padding: 8px 10px; margin: -8px -10px; min-height: 44px; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+    .appbar .back:active { background: var(--soft); }
+    .appbar .step-label { color: var(--muted); font-size: 14px; margin-left: auto; }
+
+    .screen { padding: 16px 16px calc(24px + env(safe-area-inset-bottom)); flex: 1; }
+    .screen:focus { outline: none; }
+
+    fieldset { border: 0; padding: 0; margin: 0 0 24px; }
+    legend { font-weight: 700; font-size: 17px; padding: 0; margin: 0 0 8px; }
+    .hint { color: var(--muted); font-size: 15px; margin: 0 0 10px; }
+    label { font-weight: 600; display: block; margin: 0 0 6px; }
+    input[type="text"], input[type="search"], select, textarea {
+      font: inherit; width: 100%; padding: 12px; border: 2px solid var(--ink); background: #fff; min-height: 48px;
+    }
+    textarea { min-height: 90px; }
+
+    /* The whole row is the tap target (WCAG 2.2 target size, and the list-row pattern
+       both iOS and Android use), not just the 24px checkbox or radio inside it. */
+    .choice { display: flex; align-items: flex-start; gap: 10px; border: 2px solid var(--line); padding: 14px 12px; margin-bottom: 8px; cursor: pointer; min-height: 48px; font-weight: 400; }
+    .choice input { width: 24px; height: 24px; flex: none; margin: 2px 0 0; }
+    .choice:has(input:checked) { border-color: var(--accent); background: var(--soft); }
+    .choice:active { background: var(--soft); }
+    .choice .t { font-weight: 600; }
+    .choice .d { color: var(--muted); font-size: 14px; }
+
+    .urgency { display: grid; gap: 8px; }
+    .urgency .choice.ok:has(input:checked) { border-color: var(--good); background: #eaf2ec; }
+    .urgency .choice.soon:has(input:checked) { border-color: var(--warn); background: #faf1e6; }
+    .urgency .choice.now:has(input:checked) { border-color: var(--urgent); background: #f7e8e8; }
+
+    .home-search { position: relative; }
+    .home-results { border: 2px solid var(--ink); border-top: 0; max-height: 320px; overflow-y: auto; background: #fff; }
+    .home-results button { display: block; width: 100%; text-align: left; font: inherit; padding: 12px; border: 0; border-bottom: 1px solid var(--line); background: #fff; cursor: pointer; min-height: 48px; }
+    .home-results button:hover, .home-results button:focus-visible { background: var(--soft); }
+    .home-card { border: 2px solid var(--accent); background: var(--soft); padding: 12px; display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 20px; }
+    .home-card .ref { font-weight: 700; font-size: 18px; }
+    .home-card .meta { color: var(--muted); font-size: 14px; }
+    .link-button { background: none; border: 0; color: var(--accent); text-decoration: underline; font: inherit; padding: 10px 8px; min-height: 44px; cursor: pointer; }
+
+    .photo-preview { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
+    .photo-preview img { width: 84px; height: 84px; object-fit: cover; border: 2px solid var(--line); }
+
+    .screen-nav { margin-top: 28px; padding-bottom: env(safe-area-inset-bottom); }
+    button.primary { font: inherit; font-weight: 700; padding: 16px; width: 100%; min-height: 52px; cursor: pointer; border: 2px solid var(--accent); background: var(--accent); color: #fff; font-size: 18px; }
+    button.primary:active:not(:disabled) { background: #164a6c; }
+    button.primary:disabled { opacity: 0.5; cursor: not-allowed; }
+    button.secondary { font: inherit; font-weight: 600; padding: 12px; width: 100%; min-height: 48px; cursor: pointer; border: 2px solid var(--accent); background: #fff; color: var(--accent); margin-top: 10px; }
+    button.secondary:active { background: var(--soft); }
+
+    /* Review screen: a read-only summary with an Edit link back to the screen it came from */
+    .summary-item { border-top: 1px solid var(--line); padding: 12px 0; display: flex; justify-content: space-between; gap: 12px; }
+    .summary-item:last-child { border-bottom: 1px solid var(--line); }
+    .summary-item .k { color: var(--muted); font-size: 14px; }
+    .summary-item .v { font-weight: 600; }
+    .summary-item .edit { flex: none; }
+
+    .confirm-icon { width: 56px; height: 56px; border-radius: 50%; background: var(--good); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 12px; }
+
+    .sent-list { list-style: none; padding: 0; margin: 0; }
+    .sent-list li { border-top: 1px solid var(--line); padding: 10px 0; font-size: 15px; }
+    .sent-list .tag { display: inline-block; font-size: 12px; font-weight: 700; padding: 1px 8px; color: #fff; margin-right: 6px; }
+    .tag.ok { background: var(--good); } .tag.soon { background: var(--warn); } .tag.now { background: var(--urgent); }
+
+    .start-count { border: 2px solid var(--line); padding: 12px; margin-top: 24px; display: flex; justify-content: space-between; align-items: center; }
+  </style>
+</head>
+<body>
+  <div class="banner">Prototype with made-up homes. Not a real service. For engineers, tradespeople and visiting staff.</div>
+
+  <div class="app">
+    <div class="appbar">
+      <button type="button" id="back-btn" class="back" hidden>&larr; Back</button>
+      <span id="step-label" class="step-label"></span>
+    </div>
+
+    <section id="screen-start" class="screen" tabindex="-1" aria-labelledby="h-start">
+      <h1 id="h-start">Report what you found</h1>
+      <p class="lead">Been in a tenant's home? Tell us what you saw. Housing officers will see it on the home's record.</p>
+      <button type="button" class="primary" id="start-btn">Start a new report</button>
+      <div class="start-count" id="start-count" hidden>
+        <span id="start-count-text"></span>
+        <button type="button" class="link-button" id="see-reports-link">See them</button>
+      </div>
+    </section>
+
+    <section id="screen-home" class="screen" tabindex="-1" hidden aria-labelledby="h-home">
+      <h1 id="h-home">Which home?</h1>
+      <div class="field">
+        <label for="home-search">Search by area</label>
+        <div class="home-search">
+          <input id="home-search" type="search" autocomplete="off" placeholder="For example, Braeview">
+          <div id="home-results" class="home-results" hidden></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="screen-about" class="screen" tabindex="-1" hidden aria-labelledby="h-about">
+      <h1 id="h-about">About this visit</h1>
+      <div id="about-home-card"></div>
+      <fieldset>
+        <legend>Who's reporting</legend>
+        <div class="field">
+          <label for="r-name">Your name (optional)</label>
+          <input id="r-name" type="text" autocomplete="name">
+        </div>
+        <div class="field">
+          <label for="r-role">What's your role</label>
+          <select id="r-role">
+            <option>Repairs engineer</option>
+            <option>Tradesperson</option>
+            <option>Energy advisor</option>
+            <option>Community support</option>
+            <option>Other visiting staff</option>
+          </select>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Did you speak to anyone in the household?</legend>
+        <label class="choice"><input type="radio" name="spoke" value="Yes"><span>Yes</span></label>
+        <label class="choice"><input type="radio" name="spoke" value="No"><span>No &mdash; nobody was in</span></label>
+      </fieldset>
+      <div class="screen-nav"><button type="button" class="primary" id="about-next">Continue</button></div>
+    </section>
+
+    <section id="screen-found" class="screen" tabindex="-1" hidden aria-labelledby="h-found">
+      <h1 id="h-found">What did you find?</h1>
+      <p class="hint">Choose all that apply. Just what you can see &mdash; don't ask about anyone's health. That's kept separate, and only shared if the household agrees.</p>
+      <div id="what-found"></div>
+      <div class="field" id="other-wrap" hidden>
+        <label for="r-other">Tell us more</label>
+        <input id="r-other" type="text">
+      </div>
+      <div class="screen-nav"><button type="button" class="primary" id="found-next" disabled>Continue</button></div>
+    </section>
+
+    <section id="screen-urgency" class="screen" tabindex="-1" hidden aria-labelledby="h-urgency">
+      <h1 id="h-urgency">Where, and how urgent?</h1>
+      <div class="field">
+        <label for="r-where">Where in the home</label>
+        <select id="r-where">
+          <option>Not sure or more than one room</option>
+          <option>Kitchen</option>
+          <option>Bathroom</option>
+          <option>Bedroom</option>
+          <option>Living room</option>
+          <option>Hallway or stairs</option>
+          <option>Whole home</option>
+        </select>
+      </div>
+      <fieldset>
+        <legend>How urgent is it?</legend>
+        <div class="urgency">
+          <label class="choice ok"><input type="radio" name="urgency" value="ok"><span><span class="t">Just noting it</span><br><span class="d">Looks fine for now</span></span></label>
+          <label class="choice soon"><input type="radio" name="urgency" value="soon"><span><span class="t">Needs a look soon</span><br><span class="d">Getting worse, not urgent today</span></span></label>
+          <label class="choice now"><input type="radio" name="urgency" value="now"><span><span class="t">Needs action now</span><br><span class="d">Risk to health or the building today</span></span></label>
+        </div>
+      </fieldset>
+      <div class="screen-nav"><button type="button" class="primary" id="urgency-next" disabled>Continue</button></div>
+    </section>
+
+    <section id="screen-detail" class="screen" tabindex="-1" hidden aria-labelledby="h-detail">
+      <h1 id="h-detail">Add any detail</h1>
+      <div class="field">
+        <label for="r-photo">Add a photo (optional)</label>
+        <input id="r-photo" type="file" accept="image/*" capture="environment">
+        <div id="photo-preview" class="photo-preview"></div>
+      </div>
+      <fieldset>
+        <legend><label for="r-notes">Anything else? (optional)</label></legend>
+        <textarea id="r-notes" placeholder="Anything that would help a housing officer understand what you saw"></textarea>
+      </fieldset>
+      <div class="screen-nav"><button type="button" class="primary" id="detail-next">Review</button></div>
+    </section>
+
+    <section id="screen-review" class="screen" tabindex="-1" hidden aria-labelledby="h-review">
+      <h1 id="h-review">Check and send</h1>
+      <div id="review-summary"></div>
+      <div class="screen-nav"><button type="button" class="primary" id="send-btn">Send this report</button></div>
+    </section>
+
+    <section id="screen-sent" class="screen" tabindex="-1" hidden aria-labelledby="h-sent">
+      <div class="confirm-icon" aria-hidden="true">&#10003;</div>
+      <h1 id="h-sent">Report sent</h1>
+      <p id="sent-message" role="status"></p>
+      <div class="screen-nav">
+        <button type="button" class="primary" id="report-another">Report another home</button>
+        <button type="button" class="secondary" id="done-btn">Done</button>
+      </div>
+      <section id="sent-section" hidden>
+        <h2>Your reports today</h2>
+        <ul id="sent-list" class="sent-list"></ul>
+      </section>
+    </section>
+  </div>
+
+  <script src="data/homes.js"></script>
+  <script src="report.js"></script>
+</body>
+</html>
