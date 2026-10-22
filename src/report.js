@@ -98,8 +98,28 @@
     const card = `<div class="home-card">
       <div><div class="ref">${esc(home.area)}</div><div class="meta">${esc(home.type)}, ${esc(home.floor)}, built ${home.built}</div></div>
     </div>`;
-    $("about-home-card").innerHTML = card;
+    $("about-home-card").innerHTML = card + checksFor(home);
     goTo("about");
+  }
+
+  // ---------- What's missing for this home, from the officer view, so the engineer can check it
+  // Home only: never anything about the household's health.
+  const sensors = (window.DATA && window.DATA.sensors) || {};
+  function checksFor(home) {
+    const checks = [];
+    if (home.dpc === "Unknown") checks.push(["Damp-proof course", "Not checked yet."]);
+    const sensor = sensors[home.id];
+    if (!sensor) checks.push(["Sensor readings", "No damp sensor here. Note any condensation or damp smell."]);
+    else {
+      const gaps = (sensor.humidity || []).filter((v) => v === null).length;
+      if (gaps) checks.push(["Sensor", `It missed ${gaps} readings. Check it's switched on and working.`]);
+    }
+    if (!checks.length) return "";
+    return `<div class="checks" role="note" aria-labelledby="checks-heading">
+      <h2 id="checks-heading">Please check while you're there</h2>
+      <p class="checks-hint">We don't have this information for this home yet.</p>
+      <ul>${checks.map(([what, note]) => `<li><span class="tag">Missing</span><strong>${esc(what)}:</strong> ${esc(note)}</li>`).join("")}</ul>
+    </div>`;
   }
 
   // ---------- Screen: about
