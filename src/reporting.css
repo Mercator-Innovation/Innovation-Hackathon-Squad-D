@@ -39,6 +39,22 @@
 .kpi-meter b { position: absolute; top: -4px; bottom: -4px; width: 3px; margin-left: -1px; background: var(--ink); }
 .kpi-rules { font-size: 14px; color: var(--muted); }
 
+/* Planned vs actual bar graph on each card: planned is an outline, actual is solid */
+.kpi-plan { margin-top: 6px; padding-top: 8px; border-top: 1px solid var(--line); }
+.kpi-plan svg { display: block; width: 100%; height: auto; margin: 4px 0; }
+.kpi-plan .plan { fill: var(--bg); stroke: var(--ink); stroke-width: 1.5; stroke-dasharray: 3 2; }
+.kpi-plan .actual { fill: var(--c); stroke: var(--ink); stroke-width: 1; }
+.kpi-plan .axis { stroke: var(--ink); stroke-width: 1; }
+.kpi-plan text { font-size: 12px; fill: var(--ink); }
+.kpi-plan-key { display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; }
+.kpi-plan-key i { display: inline-block; width: 14px; height: 12px; border: 1px solid var(--ink); }
+.kpi-plan-key i.plan { background: var(--bg); border-style: dashed; }
+.kpi-plan-key i.actual { background: var(--c); margin-left: 8px; }
+.kpi-plan details { font-size: 14px; }
+.kpi-plan summary { cursor: pointer; color: var(--accent); text-decoration: underline; }
+.kpi-plan table { margin-top: 6px; border-collapse: collapse; }
+.kpi-plan th, .kpi-plan td { padding: 2px 10px 2px 0; text-align: left; }
+
 /* Month by month */
 .kpi-trend td { white-space: nowrap; }
 .kpi-bar { display: inline-block; width: 80px; height: 12px; margin-right: 8px; border-radius: 6px; background: var(--soft); border: 1px solid var(--line); vertical-align: middle; overflow: hidden; }
