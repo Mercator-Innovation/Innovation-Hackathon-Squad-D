@@ -228,10 +228,13 @@ legend { font-weight: 700; margin-bottom: 4px; }
 .radio { display: flex; gap: 8px; align-items: center; margin: 6px 0; }
 .radio input { width: 20px; height: 20px; margin: 0; }
 textarea { font: inherit; width: 100%; max-width: 500px; min-height: 70px; border: 2px solid var(--ink); padding: 6px; background: var(--surface); color: var(--ink); }
-#engineer, #cases input[type="text"] { font: inherit; padding: 6px 8px; border: 2px solid var(--ink); margin-bottom: 12px; background: var(--surface); color: var(--ink); }
-#engineer { width: 100%; max-width: 300px; }
-#cases input[type="text"] { width: 100%; min-width: 140px; margin-bottom: 0; }
+#engineer, #visit-type, #cases input[type="text"], #cases select { font: inherit; padding: 6px 8px; border: 2px solid var(--ink); margin-bottom: 12px; background: var(--surface); color: var(--ink); }
+#engineer, #visit-type { width: 100%; max-width: 300px; }
+#cases input[type="text"], #cases select { width: 100%; min-width: 140px; margin-bottom: 0; }
 #cases .reasons { font-size: 14px; }
+.photos { list-style: none; padding: 0; margin: 0 0 6px; display: flex; flex-wrap: wrap; gap: 4px; }
+.photos img { width: 48px; height: 48px; object-fit: cover; border: 1px solid var(--line); display: block; }
+.photo-upload { cursor: pointer; white-space: nowrap; }
 .saved { color: var(--ok-ink); font-weight: 700; margin-left: 12px; }
 .privacy { font-size: 14px; color: var(--muted); }
 
