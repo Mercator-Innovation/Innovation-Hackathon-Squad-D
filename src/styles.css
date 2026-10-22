@@ -105,9 +105,9 @@ h3 { font-size: 18px; margin: 20px 0 8px; }
 .summary { list-style: none; padding: 0; margin: 0 0 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
 .summary li { border-left: 6px solid var(--line); background: var(--soft); padding: 12px; }
 .summary .num { display: block; font-size: 32px; font-weight: 700; line-height: 1.1; }
-.summary li.higher { border-color: var(--higher); }
-.summary li.medium { border-color: var(--medium); }
-.summary li.lower { border-color: var(--lower); }
+.summary li.reviewed { border-color: var(--lower); }
+.summary li.reports { border-color: var(--medium); }
+.summary li.no-contact { border-color: var(--higher); }
 .summary li.sensors { border-color: var(--accent); }
 
 /* Today: the officer's workflow, above the overview stats. One card for the
