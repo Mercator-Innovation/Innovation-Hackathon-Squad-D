@@ -14,6 +14,11 @@
     summaryLabel: "How many KPIs are red, amber and green",
     target: "Target",
     noRag: "For information",
+    planVsActual: "Planned and actual, May to October",
+    planned: "Planned",
+    actual: "Actual",
+    month: "Month",
+    showNumbers: "Show the numbers (earlier months made up)",
     thisMonth: "This month (so far)",
     healthNote: "Housing officers ask, with the household's agreement. Engineers never collect health information.",
     publishedHeading: "How this links to Cloch's published measures",
@@ -89,16 +94,16 @@
     // up: bigger is better (green at `green` or more, amber at `amber` or more). down: smaller is better.
     const sensorPct = Math.round(((readings - missed) / readings) * 1000) / 10;
     const risk = [
-      { value: pct(reviewed.length, higher.length), unit: "%", text: `of higher-risk homes reviewed by staff (${reviewed.length} of ${higher.length})`, up: true, green: 90, amber: 50, target: 100 },
-      { value: pct(acted.length, higher.length), unit: "%", text: `of higher-risk homes have an action: a visit, a call, a referral or a repair (${acted.length} of ${higher.length})`, up: true, green: 90, amber: 50, target: 90 },
-      { value: waitingVulnerable.length, text: "higher-risk homes where someone may be more vulnerable, not reviewed yet", up: false, green: 0, amber: 10 },
-      { value: unassigned.length, text: `visits booked with no engineer yet (of ${visits.length} booked)`, up: false, green: 0, amber: 2 }
+      { id: "reviewed", value: pct(reviewed.length, higher.length), unit: "%", text: `of higher-risk homes reviewed by staff (${reviewed.length} of ${higher.length})`, up: true, green: 90, amber: 50, target: 100 },
+      { id: "acted", value: pct(acted.length, higher.length), unit: "%", text: `of higher-risk homes have an action: a visit, a call, a referral or a repair (${acted.length} of ${higher.length})`, up: true, green: 90, amber: 50, target: 90 },
+      { id: "vulnerable", value: waitingVulnerable.length, text: "higher-risk homes where someone may be more vulnerable, not reviewed yet", up: false, green: 0, amber: 10 },
+      { id: "unassigned", value: unassigned.length, text: `visits booked with no engineer yet (of ${visits.length} booked)`, up: false, green: 0, amber: 2 }
     ];
     const gaps = [
-      { value: pct(dpcKnown, homes.length), unit: "%", text: `of homes have had the damp-proof course checked (${homes.length - dpcKnown} still to check)`, up: true, green: 95, amber: 85, target: 95 },
-      { value: pct(asked, lived.length), unit: "%", text: `of households asked about health (${lived.length - asked} not asked yet). ${W.healthNote}`, up: true, green: 80, amber: 60, target: 80 },
+      { id: "dpc", value: pct(dpcKnown, homes.length), unit: "%", text: `of homes have had the damp-proof course checked (${homes.length - dpcKnown} still to check)`, up: true, green: 95, amber: 85, target: 95 },
+      { id: "asked", value: pct(asked, lived.length), unit: "%", text: `of households asked about health (${lived.length - asked} not asked yet). ${W.healthNote}`, up: true, green: 80, amber: 60, target: 80 },
       { value: fillable, text: "missing facts engineers can check on visits already booked" },
-      { value: sensorPct, unit: "%", text: `of sensor readings received from ${sensors.length} pilot homes (${missed} missed)`, up: true, green: 98, amber: 95, target: 98 }
+      { id: "sensor", value: sensorPct, unit: "%", text: `of sensor readings received from ${sensors.length} pilot homes (${missed} missed)`, up: true, green: 98, amber: 95, target: 98 }
     ];
     risk.concat(gaps).forEach((k) => (k.rag = ragFor(k)));
 
@@ -176,8 +181,42 @@
         <span class="kpi-text">${esc(k.text)}</span>
         ${meter}
         ${r ? `<span class="kpi-rules">${k.target !== undefined ? `${esc(W.target)} ${k.target}${esc(k.unit || "")}. ` : ""}${esc(rules(k))}</span>` : ""}
+        ${planChart(k)}
       </li>`;
     }).join("")}</ul>`;
+  }
+
+  // Planned vs actual, month by month, as pairs of bars: planned is an outline, actual is solid.
+  // Earlier months come from data/kpiPlan in progress.js (made up); this month's actual is live.
+  function planChart(k) {
+    const P = D.kpiPlan, series = P && P[k.id];
+    if (!series) return "";
+    const pc = k.unit === "%";
+    const round = (v) => Math.round(v * 10) / 10;
+    const clamp = (v) => Math.max(0, pc ? Math.min(100, v) : v);
+    const actual = series.actualMore.map((d) => clamp(round(k.value + d))).concat([k.value]);
+    const plan = series.plan;
+    const top = pc ? 100 : Math.max(1, ...plan, ...actual);
+    const w = 300, h = 120, base = 100, bw = 16, gap = w / plan.length;
+    const y = (v) => base - (v / top) * (base - 8);
+    const short = (m) => new Date(m + "-01").toLocaleDateString("en-GB", { month: "short" });
+    const bars = plan.map((p, i) => {
+      const x = i * gap + (gap - bw * 2 - 2) / 2;
+      return `<rect class="plan" x="${x}" y="${y(p)}" width="${bw}" height="${base - y(p)}"></rect>
+        <rect class="actual" x="${x + bw + 2}" y="${y(actual[i])}" width="${bw}" height="${Math.max(base - y(actual[i]), 1)}"></rect>
+        <text x="${i * gap + gap / 2}" y="${h - 4}" text-anchor="middle">${short(P.months[i])}</text>`;
+    }).join("");
+    const u = k.unit || "";
+    const last = plan.length - 1;
+    const label = `${W.planVsActual}: this month planned ${plan[last]}${u}, actual ${actual[last]}${u}`;
+    const rows = plan.map((p, i) => `<tr><th scope="row">${monthName(P.months[i])}</th><td>${p}${esc(u)}</td><td>${actual[i]}${esc(u)}</td></tr>`).join("");
+    return `<div class="kpi-plan">
+      <span class="kpi-plan-key"><i class="plan"></i>${esc(W.planned)} <i class="actual"></i>${esc(W.actual)}</span>
+      <svg viewBox="0 0 ${w} ${h}" role="img" aria-label="${esc(label)}"><line class="axis" x1="0" x2="${w}" y1="${base}" y2="${base}"></line>${bars}</svg>
+      <details><summary>${esc(W.showNumbers)}</summary>
+        <table><thead><tr><th scope="col">${esc(W.month)}</th><th scope="col">${esc(W.planned)}</th><th scope="col">${esc(W.actual)}</th></tr></thead><tbody>${rows}</tbody></table>
+      </details>
+    </div>`;
   }
 
   function monthName(m) {
