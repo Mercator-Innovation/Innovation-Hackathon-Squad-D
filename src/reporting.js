@@ -11,9 +11,9 @@
     trendHeading: "Month by month",
     trendHint: "Earlier months are made up for the prototype. This month is worked out from the data.",
     trendCols: ["Month", "Homes at higher risk", "Damp-proof course not checked", "Engineer visits booked"],
-    onTrack: "On track",
-    behind: "Needs attention",
+    summaryLabel: "How many KPIs are red, amber and green",
     target: "Target",
+    noRag: "For information",
     thisMonth: "This month (so far)",
     healthNote: "Housing officers ask, with the household's agreement. Engineers never collect health information.",
     publishedHeading: "How this links to Cloch's published measures",
@@ -27,6 +27,25 @@
   const C = window.CONTENT, D = window.DATA, $ = (id) => document.getElementById(id);
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   const pct = (n, d) => (d ? Math.round((n / d) * 100) : 0);
+
+  // RAG status: a symbol and a word as well as a colour, so it never relies on colour alone
+  const RAG = {
+    red: { name: "Red", label: "off track", icon: "✕" },
+    amber: { name: "Amber", label: "at risk", icon: "!" },
+    green: { name: "Green", label: "on track", icon: "✓" }
+  };
+  function ragFor(k) {
+    if (k.up === undefined) return null;
+    if (k.up) return k.value >= k.green ? "green" : k.value >= k.amber ? "amber" : "red";
+    return k.value <= k.green ? "green" : k.value <= k.amber ? "amber" : "red";
+  }
+  // The rules in words, for example "Green 90%+ · Amber 50–89% · Red under 50%"
+  function rules(k) {
+    const u = k.unit || "";
+    return k.up
+      ? `Green ${k.green}${u}+ · Amber ${k.amber}–${k.green - 1}${u} · Red under ${k.amber}${u}`
+      : `Green ${k.green} · Amber ${k.green + 1}–${k.amber} · Red over ${k.amber}`;
+  }
 
   // Score every home the same way app.js does
   const tenantByHome = {};
@@ -66,19 +85,22 @@
     const readings = sensors.reduce((n, h) => n + h.sensor.humidity.length, 0);
     const missed = sensors.reduce((n, h) => n + h.sensor.missing, 0);
 
-    // [headline, what it means, target text, on track?]
+    // Each KPI: the value, what it means, and its RAG rules (example rules for Cloch to set).
+    // up: bigger is better (green at `green` or more, amber at `amber` or more). down: smaller is better.
+    const sensorPct = Math.round(((readings - missed) / readings) * 1000) / 10;
     const risk = [
-      [pct(reviewed.length, higher.length) + "%", `of higher-risk homes reviewed by staff (${reviewed.length} of ${higher.length})`, "100%", reviewed.length === higher.length],
-      [pct(acted.length, higher.length) + "%", `of higher-risk homes have an action: a visit, a call, a referral or a repair (${acted.length} of ${higher.length})`, "90% or more", pct(acted.length, higher.length) >= 90],
-      [waitingVulnerable.length, "higher-risk homes where someone may be more vulnerable, not reviewed yet", "0", waitingVulnerable.length === 0],
-      [unassigned.length, `visits booked with no engineer yet (of ${visits.length} booked)`, "0", unassigned.length === 0]
+      { value: pct(reviewed.length, higher.length), unit: "%", text: `of higher-risk homes reviewed by staff (${reviewed.length} of ${higher.length})`, up: true, green: 90, amber: 50, target: 100 },
+      { value: pct(acted.length, higher.length), unit: "%", text: `of higher-risk homes have an action: a visit, a call, a referral or a repair (${acted.length} of ${higher.length})`, up: true, green: 90, amber: 50, target: 90 },
+      { value: waitingVulnerable.length, text: "higher-risk homes where someone may be more vulnerable, not reviewed yet", up: false, green: 0, amber: 10 },
+      { value: unassigned.length, text: `visits booked with no engineer yet (of ${visits.length} booked)`, up: false, green: 0, amber: 2 }
     ];
     const gaps = [
-      [pct(dpcKnown, homes.length) + "%", `of homes have had the damp-proof course checked (${homes.length - dpcKnown} still to check)`, "95% or more", pct(dpcKnown, homes.length) >= 95],
-      [pct(asked, lived.length) + "%", `of households asked about health (${lived.length - asked} not asked yet). ${W.healthNote}`, "80% or more", pct(asked, lived.length) >= 80],
-      [fillable, "missing facts engineers can check on visits already booked", "", null],
-      [(((readings - missed) / readings) * 100).toFixed(1) + "%", `of sensor readings received from ${sensors.length} pilot homes (${missed} missed)`, "98% or more", (readings - missed) / readings >= 0.98]
+      { value: pct(dpcKnown, homes.length), unit: "%", text: `of homes have had the damp-proof course checked (${homes.length - dpcKnown} still to check)`, up: true, green: 95, amber: 85, target: 95 },
+      { value: pct(asked, lived.length), unit: "%", text: `of households asked about health (${lived.length - asked} not asked yet). ${W.healthNote}`, up: true, green: 80, amber: 60, target: 80 },
+      { value: fillable, text: "missing facts engineers can check on visits already booked" },
+      { value: sensorPct, unit: "%", text: `of sensor readings received from ${sensors.length} pilot homes (${missed} missed)`, up: true, green: 98, amber: 95, target: 98 }
     ];
+    risk.concat(gaps).forEach((k) => (k.rag = ragFor(k)));
 
     // This month's row comes from the live numbers
     const dpcUnknown = homes.length - dpcKnown;
@@ -86,20 +108,33 @@
       .map((m) => ({ month: m.month, higher: higher.length + m.higherMore, dpcUnknown: dpcUnknown + m.dpcUnknownMore, visits: m.visits }))
       .concat([{ month: null, higher: higher.length, dpcUnknown, visits: visits.length }]);
     const max = (k) => Math.max(...months.map((m) => m[k]), 1);
-    const bar = (v, k) => `<span class="kpi-bar"><i style="width:${Math.round((v / max(k)) * 100)}%"></i></span>${v}`;
+    // The last row also says how much it changed since last month, and whether that's good
+    const bar = (v, k, i, downIsGood) => {
+      const prev = i > 0 ? months[i - 1][k] : null;
+      const diff = prev === null || i < months.length - 1 ? "" : v - prev;
+      const change = diff === "" || diff === 0 ? "" :
+        `<span class="kpi-change ${(diff < 0) === downIsGood ? "good" : "bad"}">${diff < 0 ? "↓" : "↑"} ${Math.abs(diff)}</span>`;
+      return `<span class="kpi-bar ${k}"><i style="width:${Math.round((v / max(k)) * 100)}%"></i></span>${v}${change}`;
+    };
+
+    const all = risk.concat(gaps).filter((k) => k.rag);
+    const count = (r) => all.filter((k) => k.rag === r).length;
 
     $("progress").innerHTML = `
       <h2 id="progress-heading">${esc(W.heading)}</h2>
       <p class="hint">${esc(W.hint)}</p>
+      <ul class="rag-summary" aria-label="${esc(W.summaryLabel)}">
+        ${["red", "amber", "green"].map((r) => `<li class="rag-${r}"><span class="num">${count(r)}</span><span>${RAG[r].icon} ${esc(RAG[r].name)}: ${esc(RAG[r].label)}</span></li>`).join("")}
+      </ul>
       <h3>${esc(W.riskHeading)}</h3>${cards(risk)}
       <h3>${esc(W.gapsHeading)}</h3>${cards(gaps)}
       <h3>${esc(W.trendHeading)}</h3>
       <p class="hint">${esc(W.trendHint)}</p>
       <div class="table-wrap"><table class="kpi-trend">
         <thead><tr>${W.trendCols.map((c) => `<th scope="col">${esc(c)}</th>`).join("")}</tr></thead>
-        <tbody>${months.map((m) => `<tr>
+        <tbody>${months.map((m, i) => `<tr>
           <th scope="row">${m.month ? monthName(m.month) : esc(W.thisMonth)}</th>
-          <td>${bar(m.higher, "higher")}</td><td>${bar(m.dpcUnknown, "dpcUnknown")}</td><td>${bar(m.visits, "visits")}</td>
+          <td>${bar(m.higher, "higher", i, true)}</td><td>${bar(m.dpcUnknown, "dpcUnknown", i, true)}</td><td>${bar(m.visits, "visits", i, false)}</td>
         </tr>`).join("")}</tbody>
       </table></div>
       ${published()}`;
@@ -127,10 +162,22 @@
   }
 
   function cards(items) {
-    return `<ul class="kpis">${items.map(([num, text, target, ok]) => `<li class="${ok === null ? "" : ok ? "ok" : "behind"}">
-      <span class="num">${esc(num)}</span>${esc(text)}
-      ${target ? `<span class="kpi-status">${esc(W.target)}: ${esc(target)}. <strong>${ok ? "✓ " + esc(W.onTrack) : "! " + esc(W.behind)}</strong></span>` : ""}
-    </li>`).join("")}</ul>`;
+    return `<ul class="kpis">${items.map((k) => {
+      const r = k.rag ? RAG[k.rag] : null;
+      const pill = r
+        ? `<span class="rag-pill">${r.icon} ${esc(r.name)}<span class="rag-pill-label">: ${esc(r.label)}</span></span>`
+        : `<span class="rag-pill">${esc(W.noRag)}</span>`;
+      // A bar towards 100%, with a line where the target is (percentages only)
+      const meter = k.unit === "%"
+        ? `<span class="kpi-meter" aria-hidden="true"><i style="width:${Math.min(k.value, 100)}%"></i>${k.target ? `<b style="left:${k.target}%"></b>` : ""}</span>` : "";
+      return `<li class="rag-${k.rag || "none"}">
+        ${pill}
+        <span class="num">${esc(k.value)}${esc(k.unit || "")}</span>
+        <span class="kpi-text">${esc(k.text)}</span>
+        ${meter}
+        ${r ? `<span class="kpi-rules">${k.target !== undefined ? `${esc(W.target)} ${k.target}${esc(k.unit || "")}. ` : ""}${esc(rules(k))}</span>` : ""}
+      </li>`;
+    }).join("")}</ul>`;
   }
 
   function monthName(m) {
