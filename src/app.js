@@ -169,15 +169,33 @@
     const visitChoice = C.detail.options[0];
     const visits = homes.filter((h) => decisions[h.id] && decisions[h.id].choice === visitChoice);
     const T = C.today;
+    const plural = (n, text) => text.replace("{s}", n === 1 ? "" : "s");
     const tasks = [
-      { n: homes.filter((h) => h.risk.band.id === "higher" && !decisions[h.id]).length, text: T.toReview, none: T.toReviewNone, tab: "tab-homes", setup: () => { state.band = "higher"; state.unreviewed = true; $("f-band").value = "higher"; $("f-unreviewed").checked = true; state.shown = 25; } },
-      { n: visits.filter((h) => !decisions[h.id].engineer).length, text: T.needsEngineer, none: T.needsEngineerNone, tab: "tab-visits" },
-      { n: visits.filter((h) => decisions[h.id].when && isToday(decisions[h.id].when)).length, text: T.bookedToday, none: T.bookedTodayNone, tab: "tab-visits" }
-    ];
-    $("today-tasks").innerHTML = tasks.map((task, i) => `<li class="${task.n ? "due" : "clear"}">
-        <span class="num">${task.n}</span>${esc(task.n ? task.text : task.none)}
-        ${task.n ? `<button type="button" class="link-button" data-task="${i}">${esc(T.goTo)} ${esc(C.tabs[task.tab === "tab-homes" ? "homes" : "visits"])}</button>` : ""}
-      </li>`).join("");
+      { n: homes.filter((h) => h.risk.band.id === "higher" && !decisions[h.id]).length, text: T.toReview, none: T.toReviewNone, button: T.toReviewButton, tab: "tab-homes", setup: () => { state.band = "higher"; state.unreviewed = true; $("f-band").value = "higher"; $("f-unreviewed").checked = true; state.shown = 25; } },
+      { n: visits.filter((h) => !decisions[h.id].engineer).length, text: T.needsEngineer, none: T.needsEngineerNone, button: T.needsEngineerButton, tab: "tab-visits" },
+      { n: visits.filter((h) => decisions[h.id].when && isToday(decisions[h.id].when)).length, text: T.bookedToday, none: T.bookedTodayNone, button: T.bookedTodayButton, tab: "tab-visits" }
+    ].map((t) => Object.assign(t, { text: plural(t.n, t.text) }));
+    // The most urgent task becomes one big card with a real button; the rest are a short line each.
+    const heroIndex = tasks.reduce((best, t, i) => (t.n > tasks[best].n ? i : best), 0);
+    const hero = tasks[heroIndex];
+    const minor = tasks.filter((_, i) => i !== heroIndex);
+
+    const heroHtml = hero.n
+      ? `<div class="today-hero due">
+          <span class="num">${hero.n}</span>
+          <p>${esc(hero.text)}</p>
+          <button type="button" class="primary" data-task="${heroIndex}">${esc(hero.button)}</button>
+        </div>`
+      : `<div class="today-hero clear"><p>${esc(T.allClear)}</p></div>`;
+
+    const minorHtml = `<ul class="today-minor">` + minor.map((task) => {
+      const i = tasks.indexOf(task);
+      return `<li>${task.n
+        ? `<button type="button" class="link-button" data-task="${i}"><span class="num">${task.n}</span> ${esc(task.text)}</button>`
+        : `<span class="num">${task.n}</span> ${esc(task.none)}`}</li>`;
+    }).join("") + `</ul>`;
+
+    $("today-tasks").innerHTML = heroHtml + minorHtml;
     $("today-tasks").querySelectorAll("button[data-task]").forEach((b) => b.addEventListener("click", () => {
       const task = tasks[Number(b.dataset.task)];
       if (task.setup) task.setup();
