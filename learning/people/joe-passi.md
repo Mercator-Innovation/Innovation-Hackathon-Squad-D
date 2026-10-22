@@ -34,6 +34,7 @@ ai_use_week_after:
 - Made a dataset, outside my usual job: 12 made-up example homes based on the damp research, shared in sketches/example-homes.md for the squad to build with. Prompt: "make the list of made-up example homes"
 - More research: Cloch partly has the data to assess damp risk (property details, repairs history, some tenant information, a small sensor pilot) but it isn't joined up, and there's little on health conditions; EPCs are public. Nothing published found on Cloch's own stock surveys. The gap is joining data up, not collecting it. Prompt: "Does Cloch keep relevant details of their properties to assess the risks?"
 - Pulled all my research into a one-page summary doc for the squad, "Healthier homes: what Joe found" (https://claude.ai/artifact/KfKfeaPv2LNDcPDLHcMyfG). Prompts: "summarise my findings", then "yes, make the one-page summary"
+- Designed and built a rough working screen, outside my usual job: a "damp data check" that pulls together made-up data about each home, shows what's missing and what to do next, and lists signs of damp risk with reasons rather than a score (sketches/damp-data-gaps-sketch.html). It fits the idea the squad agreed. Prompts: "Could we create a service that automatically pulls existing relevant, damp-related data and highlight what information is missing?", then "yes, sketch a rough screen"
 
 ## At 19:00
 - What I worked on: <answers>
