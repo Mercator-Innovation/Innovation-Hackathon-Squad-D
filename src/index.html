@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Homes at risk of damp and cold (prototype)</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip" href="#list">Skip to the list of homes</a>
+  <div class="banner" id="banner"></div>
+
+  <main>
+    <h1 id="title"></h1>
+    <p class="lead" id="lead"></p>
+
+    <ul class="summary" id="summary" aria-label="Summary"></ul>
+
+    <form class="filters" id="filters" aria-labelledby="filters-heading">
+      <h2 id="filters-heading" class="visually-hidden"></h2>
+      <div class="field"><label for="f-area"></label><select id="f-area"></select></div>
+      <div class="field"><label for="f-setting"></label><select id="f-setting"></select></div>
+      <div class="field"><label for="f-coast"></label><select id="f-coast"></select></div>
+      <div class="field"><label for="f-band"></label><select id="f-band"></select></div>
+      <div class="field"><label for="f-search"></label><input id="f-search" type="search" autocomplete="off"></div>
+      <div class="field check"><input id="f-sensor" type="checkbox"><label for="f-sensor"></label></div>
+      <div class="field check"><input id="f-unreviewed" type="checkbox"><label for="f-unreviewed"></label></div>
+      <button type="button" id="f-reset" class="link-button"></button>
+    </form>
+
+    <div class="two-col">
+      <section aria-labelledby="map-heading" class="panel">
+        <h2 id="map-heading"></h2>
+        <p class="hint" id="map-hint"></p>
+        <div class="field check"><input id="show-dots" type="checkbox" checked><label for="show-dots"></label></div>
+        <div id="map"></div>
+        <div class="legend" id="legend"></div>
+      </section>
+
+      <section aria-labelledby="areas-heading" class="panel">
+        <h2 id="areas-heading"></h2>
+        <div class="table-wrap"><table id="areas"></table></div>
+      </section>
+    </div>
+
+    <section aria-labelledby="list-heading" id="list" tabindex="-1">
+      <h2 id="list-heading"></h2>
+      <p class="hint" id="list-hint" aria-live="polite"></p>
+      <div class="table-wrap"><table id="homes"></table></div>
+      <button type="button" id="more" class="secondary"></button>
+    </section>
+
+    <section id="detail" class="detail" hidden tabindex="-1" aria-labelledby="detail-heading"></section>
+  </main>
+
+  <script src="content.js"></script>
+  <script src="data/areas.js"></script>
+  <script src="data/homes.js"></script>
+  <script src="data/tenants.js"></script>
+  <script src="data/sensors.js"></script>
+  <script src="risk.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
