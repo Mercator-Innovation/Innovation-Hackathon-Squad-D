@@ -29,6 +29,7 @@ ai_use_week_after:
 
 ## During
 <!-- Claude adds one line per moment: prompts that worked (word for word), dead ends, surprises, things done outside my usual job, what made working as a squad easier or harder -->
+- 15:59 prompt: "is there any data collected from the pilot sensors" → no public data from Cloch's pilot, but similar pilots (Glasgow, London) showed what sensor data looks like (temperature and humidity every 30 minutes), so we could make realistic pretend readings
 
 ## At 19:00
 - What I worked on: <answers>
