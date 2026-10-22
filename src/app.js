@@ -16,13 +16,18 @@
     const tenant = tenantByHome[h.id] || null;
     const sensorRaw = D.sensors[h.id] || null;
     const sensor = sensorRaw ? Object.assign({}, sensorRaw, window.RISK.summariseSensor(sensorRaw)) : null;
-    return Object.assign({}, h, { tenant, sensor, risk: window.RISK.assess(h, tenant, sensor) });
+    const risk = window.RISK.assess(h, tenant, sensor);
+    const layers = {
+      property: window.RISK.groupScore(risk.reasons, ["Home", "Reports", "Sensor"]),
+      household: window.RISK.groupScore(risk.reasons, ["Household"])
+    };
+    return Object.assign({}, h, { tenant, sensor, risk, layers });
   });
   homes.sort((a, b) => b.risk.score - a.risk.score || a.id.localeCompare(b.id));
   const byId = {};
   homes.forEach((h) => (byId[h.id] = h));
 
-  const state = { area: "", setting: "", coast: "", band: "", search: "", sensorOnly: false, unreviewed: false, shown: 25, selected: null };
+  const state = { area: "", setting: "", coast: "", band: "", search: "", sensorOnly: false, unreviewed: false, shown: 25, selected: null, layer: "combined" };
 
   // ---------- Words
   $("banner").textContent = C.banner;
@@ -51,6 +56,10 @@
     label("f-sensor", f.sensorOnly);
     label("f-unreviewed", f.unreviewed);
     $("f-reset").textContent = f.reset;
+
+    label("f-layer", C.map.layer);
+    $("f-layer").innerHTML = C.map.layerOptions.map((o) => `<option value="${esc(o.id)}">${esc(o.label)}</option>`).join("");
+    $("f-layer").addEventListener("change", (e) => { state.layer = e.target.value; renderMap(filtered()); });
 
     const bind = (id, key, prop = "value") => $(id).addEventListener(prop === "value" ? "input" : "change", (e) => {
       state[key] = prop === "value" ? e.target.value.trim() : e.target.checked;
@@ -109,16 +118,31 @@
     return avg >= 15 ? 5 : avg >= 12 ? 4 : avg >= 9 ? 3 : avg >= 6 ? 2 : 1;
   }
 
+  function scoreFor(h) {
+    return state.layer === "property" ? h.layers.property : state.layer === "household" ? h.layers.household : h.risk.score;
+  }
+
   function renderMap(list) {
+    const layerLabel = (C.map.layerOptions.find((o) => o.id === state.layer) || {}).label || "";
+    const onHousehold = state.layer === "household";
+    $("map-hint").textContent = onHousehold ? C.map.hint + " " + C.map.householdNote : C.map.hint;
+
     const cells = {};
     list.forEach((h) => {
       const key = Math.floor(h.x / CELL) + "," + Math.floor(h.y / CELL);
-      (cells[key] = cells[key] || []).push(h.risk.score);
+      (cells[key] = cells[key] || []).push(h);
     });
-    const squares = Object.entries(cells).map(([key, scores]) => {
+    const squares = Object.entries(cells).map(([key, group]) => {
       const [cx, cy] = key.split(",").map(Number);
-      const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
-      return `<rect x="${cx * CELL}" y="${cy * CELL}" width="${CELL}" height="${CELL}" fill="var(--heat-${heatClass(avg)})" opacity="0.9"><title>${scores.length} homes, average score ${avg.toFixed(1)}</title></rect>`;
+      const avg = group.reduce((sum, h) => sum + scoreFor(h), 0) / group.length;
+      const known = group.filter((h) => h.tenant && h.tenant.consent === "Yes").length;
+      const title = onHousehold
+        ? `${group.length} homes, average ${esc(layerLabel.toLowerCase())} score ${avg.toFixed(1)}. ${known} of ${group.length} have told Cloch about their health.`
+        : `${group.length} homes, average ${esc(layerLabel.toLowerCase())} score ${avg.toFixed(1)}.`;
+      const heat = `<rect x="${cx * CELL}" y="${cy * CELL}" width="${CELL}" height="${CELL}" fill="var(--heat-${heatClass(avg)})" opacity="0.9"><title>${title}</title></rect>`;
+      const hatch = onHousehold && known / group.length < 0.5
+        ? `<rect x="${cx * CELL}" y="${cy * CELL}" width="${CELL}" height="${CELL}" fill="url(#unknown-hatch)"><title>${title}</title></rect>` : "";
+      return heat + hatch;
     }).join("");
 
     const dots = list.map((h) => `<circle class="dot ${h.risk.band.id}${state.selected === h.id ? " selected" : ""}" cx="${h.x}" cy="${h.y}" r="${state.selected === h.id ? 8 : 4}" data-id="${h.id}"><title>${h.id}, ${esc(h.area)}: ${esc(h.risk.band.label)} (${h.risk.score})</title></circle>`).join("");
@@ -126,7 +150,12 @@
     const labels = D.areas.map((a) => `<text class="area-label" x="${a.x}" y="${a.y - 58}" text-anchor="middle">${esc(a.name)}</text>`).join("");
 
     const higher = list.filter((h) => h.risk.band.id === "higher").length;
-    $("map").innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Made-up map of ${list.length} homes. ${higher} at higher risk. The table of areas has the same information.">
+    $("map").innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Made-up map of ${list.length} homes, coloured by ${esc(layerLabel.toLowerCase())}. ${higher} at higher overall risk. The table of areas has the same information.">
+      <defs>
+        <pattern id="unknown-hatch" width="8" height="8" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+          <line x1="0" y1="0" x2="0" y2="8" stroke="var(--ink)" stroke-width="3" opacity="0.3"></line>
+        </pattern>
+      </defs>
       <path class="water" d="M0 0 H${W} V40 C800 60 650 30 500 55 C350 70 200 35 0 50 Z"></path>
       <text class="water-label" x="20" y="30">${esc(C.map.water)}</text>
       <text class="made-up" x="${W - 20}" y="${H - 14}" text-anchor="end">${esc(C.map.madeUp)}</text>
@@ -138,6 +167,7 @@
     $("legend").innerHTML = `<span>${esc(C.map.legendLow)}</span>` +
       [1, 2, 3, 4, 5].map((i) => `<span class="swatch" style="background:var(--heat-${i})"></span>`).join("") +
       `<span>${esc(C.map.legendHigh)}</span>` +
+      (onHousehold ? `<span class="dot-key"><i class="hatch-swatch"></i>${esc(C.map.legendUnknown)}</span>` : "") +
       window.RISK.bands.map((b) => `<span class="dot-key"><i style="background:var(--${b.id})"></i>${esc(b.label)}</span>`).join("");
   }
 

@@ -78,6 +78,7 @@ h3 { font-size: 18px; margin: 20px 0 8px; }
 #map.no-dots .dot:not(.selected) { display: none; }
 .legend { display: flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 14px; flex-wrap: wrap; }
 .legend .swatch { width: 28px; height: 16px; border: 1px solid #0003; }
+.legend .hatch-swatch { width: 28px; height: 16px; border: 1px solid #0003; background: repeating-linear-gradient(45deg, var(--ink) 0 2px, transparent 2px 7px); opacity: 0.6; display: inline-block; }
 .legend .dot-key { display: inline-flex; align-items: center; gap: 4px; margin-left: 12px; }
 .legend .dot-key i { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
 

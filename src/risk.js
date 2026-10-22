@@ -74,6 +74,12 @@ window.RISK.assess = function (home, tenant, sensor) {
   return { score, band, reasons, unknowns };
 };
 
+// Adds up the points from just some groups of reasons, for example to show the map
+// coloured by property factors only, or household factors only.
+window.RISK.groupScore = function (reasons, groups) {
+  return reasons.filter((r) => groups.includes(r.group)).reduce((sum, r) => sum + r.points, 0);
+};
+
 // Sums up a week of sensor readings
 window.RISK.summariseSensor = function (s) {
   const hum = s.humidity.filter((v) => v !== null);
