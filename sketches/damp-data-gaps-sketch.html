@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Damp data check (rough sketch)</title>
+<style>
+  :root { --ink:#1d1d1b; --muted:#505a5f; --line:#b1b4b6; --bg:#ffffff; --soft:#f3f2f1; --gap:#fff4d6; --gapline:#8a5a00; --focus:#ffdd00; --link:#1d70b8; }
+  * { box-sizing: border-box; }
+  body { margin:0; font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Arial, sans-serif; color:var(--ink); background:var(--bg); }
+  .banner { background:var(--ink); color:#fff; padding:8px 16px; font-size:14px; }
+  main { max-width:1100px; margin:0 auto; padding:16px; }
+  h1 { font-size:28px; margin:8px 0 4px; }
+  .lead { color:var(--muted); margin:0 0 16px; max-width:65ch; }
+  .layout { display:grid; grid-template-columns: minmax(260px, 1fr) 2fr; gap:24px; }
+  @media (max-width: 720px) { .layout { grid-template-columns: 1fr; } }
+  ul.homes { list-style:none; margin:0; padding:0; border-top:1px solid var(--line); }
+  ul.homes li { border-bottom:1px solid var(--line); }
+  ul.homes button { width:100%; text-align:left; background:none; border:0; padding:12px 8px; font:inherit; color:inherit; cursor:pointer; display:flex; justify-content:space-between; gap:8px; }
+  ul.homes button[aria-current="true"] { background:var(--soft); font-weight:600; }
+  ul.homes button:hover { background:var(--soft); }
+  button:focus-visible { outline:3px solid var(--focus); outline-offset:0; box-shadow:0 0 0 6px var(--ink); }
+  .count { white-space:nowrap; font-size:14px; }
+  .count.has-gaps { color:var(--gapline); font-weight:600; }
+  h2 { font-size:22px; margin:0 0 4px; }
+  h3 { font-size:18px; margin:24px 0 8px; }
+  table { border-collapse:collapse; width:100%; }
+  th, td { text-align:left; padding:8px; border-bottom:1px solid var(--line); vertical-align:top; }
+  th { width:40%; font-weight:600; }
+  td.source { color:var(--muted); font-size:14px; }
+  tr.missing td, tr.missing th { background:var(--gap); }
+  .tag { display:inline-block; font-size:13px; font-weight:700; padding:0 6px; border:2px solid var(--gapline); color:var(--gapline); margin-right:6px; }
+  ul.list { padding-left:20px; }
+  .note { border-left:5px solid var(--line); padding:8px 12px; background:var(--soft); margin-top:24px; }
+  .wrap { overflow-x:auto; }
+</style>
+</head>
+<body>
+<div class="banner">Rough sketch with made-up data. Not a real service or real homes.</div>
+<main>
+  <h1>Damp data check</h1>
+  <p class="lead">Pulls together what we already know about each home from different systems, and shows what's missing, so staff know what to check next.</p>
+
+  <div class="layout">
+    <nav aria-label="Homes">
+      <h2>Homes</h2>
+      <p class="lead">Sorted by most missing information.</p>
+      <ul class="homes" id="homes"></ul>
+    </nav>
+    <section aria-live="polite" id="detail"></section>
+  </div>
+</main>
+
+<script>
+// Made-up homes, based on sketches/example-homes.md. Null = we don't have this information.
+const SOURCES = {
+  asset: "Property records",
+  repairs: "Repairs system",
+  epc: "EPC register (public)",
+  sensor: "Sensor pilot",
+  survey: "Stock condition survey"
+};
+const FIELDS = [
+  ["type", "Type of home", "asset"],
+  ["built", "Year built", "asset"],
+  ["walls", "Walls", "asset"],
+  ["floor", "Floor", "asset"],
+  ["epc", "Energy rating (EPC)", "epc"],
+  ["heating", "Heating", "asset"],
+  ["ventilation", "Ventilation", "survey"],
+  ["dpc", "Damp-proof course", "survey"],
+  ["lastSurvey", "Last condition survey", "survey"],
+  ["dampReports", "Damp reported before", "repairs"],
+  ["humidity", "Indoor humidity", "sensor"]
+];
+const HOMES = [
+  { id:"H01", area:"Braeview", type:"Tenement flat", built:1905, walls:"Solid stone", floor:"Ground", epc:"E", heating:"Electric storage heaters", ventilation:"None in kitchen or bathroom", dpc:"Slate, cracked", lastSurvey:2021, dampReports:"Yes, 2024", humidity:null },
+  { id:"H02", area:"Braeview", type:"Tenement flat", built:1905, walls:"Solid stone", floor:"Top (3rd)", epc:"D", heating:"Gas central heating", ventilation:null, dpc:"Not applicable (upper floor)", lastSurvey:null, dampReports:"None", humidity:null },
+  { id:"H03", area:"Rowan Rise", type:"Four-in-a-block flat", built:1952, walls:"Cavity, not insulated", floor:"Ground", epc:"D", heating:"Gas central heating", ventilation:"Trickle vents in windows", dpc:"Bitumen, works", lastSurvey:2023, dampReports:"None", humidity:null },
+  { id:"H04", area:"Rowan Rise", type:"Four-in-a-block flat", built:1952, walls:"Cavity, not insulated", floor:"Upper", epc:null, heating:"Gas central heating", ventilation:"Trickle vents in windows", dpc:"Not applicable (upper floor)", lastSurvey:2023, dampReports:"Yes, 2023", humidity:"High (sensor pilot)" },
+  { id:"H05", area:"Shorefield", type:"Terraced house", built:1938, walls:"Solid brick", floor:"Two storeys", epc:"E", heating:"Gas central heating", ventilation:null, dpc:null, lastSurvey:null, dampReports:"Yes, 2022 and 2025", humidity:null },
+  { id:"H06", area:"Shorefield", type:"Terraced house", built:1938, walls:"Solid brick, insulated outside (2019)", floor:"Two storeys", epc:"C", heating:"Gas central heating", ventilation:"Kitchen and bathroom fans", dpc:"Bitumen, works", lastSurvey:2022, dampReports:"None", humidity:null },
+  { id:"H07", area:"Glenmore Court", type:"Flat in low-rise block", built:1974, walls:"Concrete panel", floor:"1st floor", epc:"D", heating:"Electric panel heaters", ventilation:"Bathroom fan only", dpc:"Not applicable (upper floor)", lastSurvey:null, dampReports:"Yes, 2025", humidity:"High (sensor pilot)" },
+  { id:"H08", area:"Glenmore Court", type:"Flat in low-rise block", built:1974, walls:"Concrete panel", floor:"Ground", epc:null, heating:"Electric panel heaters", ventilation:null, dpc:"Plastic, works", lastSurvey:2020, dampReports:"None", humidity:null },
+  { id:"H09", area:"Larchfield Gardens", type:"Semi-detached house", built:1991, walls:"Cavity, insulated", floor:"Two storeys", epc:"C", heating:"Gas central heating", ventilation:"Kitchen and bathroom fans", dpc:"Plastic, works", lastSurvey:2024, dampReports:"None", humidity:null },
+  { id:"H10", area:"Larchfield Gardens", type:"Sheltered flat", built:1991, walls:"Cavity, insulated", floor:"Ground", epc:"C", heating:"Gas central heating", ventilation:"Kitchen and bathroom fans", dpc:"Plastic, works", lastSurvey:2024, dampReports:"None", humidity:"Normal (sensor pilot)" },
+  { id:"H11", area:"Riverside Way", type:"New-build flat", built:2018, walls:"Timber frame, insulated", floor:"2nd floor", epc:"B", heating:"Air source heat pump", ventilation:"Mechanical ventilation (whole home)", dpc:"Not applicable (upper floor)", lastSurvey:2024, dampReports:"Yes, 2025", humidity:null },
+  { id:"H12", area:"Riverside Way", type:"Wheelchair-accessible flat", built:2018, walls:"Timber frame, insulated", floor:"Ground", epc:"B", heating:"Air source heat pump", ventilation:"Mechanical ventilation (whole home)", dpc:"Membrane, works", lastSurvey:2024, dampReports:"None", humidity:null }
+];
+
+// What we'd suggest staff do about each gap.
+const NEXT_STEP = {
+  epc: "Check the public EPC register, or book an energy assessment.",
+  ventilation: "Ask the repairs team to note fans and vents on their next visit.",
+  dpc: "Add a damp-proof course check to the next visit.",
+  lastSurvey: "Book a condition survey, or a short 'home MOT' visit.",
+  humidity: "Only a few homes have sensors. Consider one here if other signs point to damp."
+};
+
+// Features from the research that make damp more likely. Shown as reasons, not a score.
+function riskFeatures(h) {
+  const r = [];
+  if (h.built < 1919) r.push("Built before 1919");
+  if (/^Solid/.test(h.walls) && !/insulated/.test(h.walls)) r.push("Solid walls, not insulated");
+  if (h.ventilation && /None|only/.test(h.ventilation)) r.push("Limited ventilation: " + h.ventilation.toLowerCase());
+  if (h.dpc && /cracked/.test(h.dpc)) r.push("Damp-proof course: " + h.dpc.toLowerCase());
+  if (h.epc && /[EFG]/.test(h.epc)) r.push("Low energy rating (" + h.epc + ")");
+  if (/^Yes/.test(h.dampReports)) r.push("Damp reported before: " + h.dampReports.replace("Yes, ", ""));
+  if (h.humidity && /High/.test(h.humidity)) r.push("High indoor humidity from sensor");
+  return r;
+}
+const gaps = h => FIELDS.filter(([k]) => h[k] === null || h[k] === undefined);
+const sorted = [...HOMES].sort((a, b) => gaps(b).length - gaps(a).length || a.id.localeCompare(b.id));
+
+const list = document.getElementById("homes");
+const detail = document.getElementById("detail");
+
+function show(id) {
+  const h = HOMES.find(x => x.id === id);
+  list.querySelectorAll("button").forEach(b => b.setAttribute("aria-current", b.dataset.id === id ? "true" : "false"));
+  const g = gaps(h);
+  const rows = FIELDS.map(([k, label, src]) => {
+    const missing = h[k] === null || h[k] === undefined;
+    return `<tr class="${missing ? "missing" : ""}"><th scope="row">${label}</th>
+      <td>${missing ? '<span class="tag">Missing</span>We don\'t have this' : h[k]}</td>
+      <td class="source">${SOURCES[src]}</td></tr>`;
+  }).join("");
+  const risks = riskFeatures(h);
+  const steps = g.map(([k, label]) => `<li><strong>${label}:</strong> ${NEXT_STEP[k] || "Find out on the next visit."}</li>`).join("");
+  detail.innerHTML = `
+    <h2>${h.id}, ${h.area}</h2>
+    <p class="lead">${h.type}, built ${h.built}</p>
+
+    <h3>What's missing (${g.length})</h3>
+    ${g.length ? `<ul class="list">${steps}</ul>` : "<p>Nothing missing. We have all the information we look for.</p>"}
+
+    <h3>Signs that make damp more likely (${risks.length})</h3>
+    ${risks.length ? `<ul class="list">${risks.map(r => `<li>${r}</li>`).join("")}</ul>` : "<p>None found in the information we have.</p>"}
+
+    <h3>Everything we know</h3>
+    <div class="wrap"><table>
+      <thead><tr><th scope="col">Information</th><th scope="col">What we have</th><th scope="col">Where it comes from</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>
+
+    <p class="note">This shows information, not a decision. A member of staff decides what to do, and can see why each sign was shown.</p>`;
+}
+
+list.innerHTML = sorted.map(h => {
+  const n = gaps(h).length;
+  return `<li><button type="button" data-id="${h.id}">
+    <span>${h.id}, ${h.area}</span>
+    <span class="count ${n ? "has-gaps" : ""}">${n ? n + " missing" : "Complete"}</span></button></li>`;
+}).join("");
+list.addEventListener("click", e => { const b = e.target.closest("button"); if (b) show(b.dataset.id); });
+show(sorted[0].id);
+</script>
+</body>
+</html>
