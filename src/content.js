@@ -2,7 +2,7 @@
 window.CONTENT = {
   banner: "Prototype with made-up homes and people. Not a real service.",
   title: "Homes at risk of damp and cold",
-  lead: "Find the homes and households most at risk, before anyone gets ill or reports a problem. The score helps you choose who to look at first. You make the call.",
+  lead: "Find the homes and households most at risk, before anyone gets ill or reports a problem. The risk level helps you choose who to look at first. You make the call.",
 
   summary: {
     reviewedThisWeek: "homes reviewed this week",
@@ -116,7 +116,7 @@ window.CONTENT = {
     sensor: "Sensor readings, 12 to 18 October",
     sensorHint: "How damp the air is (%). Above the dashed line (70%), mould is more likely.",
     decide: "Your decision",
-    decideHint: "The score is a guide. What should happen next?",
+    decideHint: "The risk level is a guide. What should happen next?",
     options: [
       "Visit and check the home",
       "Phone the household",
