@@ -94,6 +94,7 @@ window.CONTENT = {
     close: "Back to the list",
     home: "The home",
     why: "Why it's flagged",
+    whyMore: "+ {n} more, smaller reasons",
     points: "points",
     missing: "What's missing",
     missingHint: "Information we don't have yet, and how to find it out.",

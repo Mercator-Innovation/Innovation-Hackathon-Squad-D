@@ -196,6 +196,7 @@ button.secondary { background: var(--surface); color: var(--accent); margin-top:
 .why li { margin-bottom: 4px; }
 .why .pts { font-weight: 700; }
 .why .group { color: var(--muted); font-size: 14px; }
+.why .why-more { color: var(--muted); font-style: italic; list-style: none; margin-left: -18px; }
 /* Missing information: a pale yellow highlight plus a "Missing" tag, so it never relies on colour alone */
 .missing-box { background: var(--missing-bg); border-left: 6px solid var(--missing-line); padding: 4px 16px 12px; margin: 20px 0; }
 .missing-box h3 { margin-top: 12px; }
