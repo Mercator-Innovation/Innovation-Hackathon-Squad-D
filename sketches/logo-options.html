@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hacky McHackface logo options</title>
+<style>
+  body { margin: 0; font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Arial, sans-serif; color: #1d1d1b; background: #f3f2f1; }
+  main { max-width: 1100px; margin: 0 auto; padding: 16px; }
+  h1 { font-size: 28px; margin: 8px 0 4px; }
+  .lead { color: #505a5f; margin: 0 0 20px; }
+  .options { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+  figure { margin: 0; background: #fff; border: 1px solid #b1b4b6; padding: 16px; }
+  figure svg { width: 100%; height: auto; display: block; }
+  figcaption { margin-top: 12px; }
+  figcaption strong { display: block; font-size: 18px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Hacky McHackface: logo options</h1>
+  <p class="lead">Three rough ideas. Pick one, mix them, or tell me what to change.</p>
+
+  <div class="options">
+
+    <!-- A: the house with a face -->
+    <figure>
+      <svg viewBox="0 0 300 300" role="img" aria-labelledby="a-title">
+        <title id="a-title">A cartoon house with googly eyes, a big grin and a hard hat, holding a magnifying glass up to a small mould spot</title>
+        <rect width="300" height="300" fill="#e7f1fb"/>
+        <!-- house -->
+        <polygon points="70,140 150,70 230,140" fill="#c0392b"/>
+        <rect x="85" y="135" width="130" height="105" fill="#fdd08a" stroke="#1d1d1b" stroke-width="4"/>
+        <polygon points="70,140 150,70 230,140" fill="none" stroke="#1d1d1b" stroke-width="4" stroke-linejoin="round"/>
+        <!-- hard hat -->
+        <path d="M112 92 Q150 52 188 92 Z" fill="#ffdd00" stroke="#1d1d1b" stroke-width="4"/>
+        <rect x="102" y="88" width="96" height="10" rx="5" fill="#ffdd00" stroke="#1d1d1b" stroke-width="4"/>
+        <!-- googly eyes -->
+        <circle cx="128" cy="165" r="17" fill="#fff" stroke="#1d1d1b" stroke-width="4"/>
+        <circle cx="134" cy="170" r="7" fill="#1d1d1b"/>
+        <circle cx="172" cy="165" r="17" fill="#fff" stroke="#1d1d1b" stroke-width="4"/>
+        <circle cx="164" cy="160" r="7" fill="#1d1d1b"/>
+        <!-- grin -->
+        <path d="M120 200 Q150 228 180 200" fill="none" stroke="#1d1d1b" stroke-width="5" stroke-linecap="round"/>
+        <!-- mould spot and magnifier -->
+        <circle cx="205" cy="225" r="6" fill="#2f6b3c"/><circle cx="214" cy="218" r="4" fill="#2f6b3c"/>
+        <circle cx="236" cy="205" r="20" fill="#fff" fill-opacity="0.5" stroke="#1d1d1b" stroke-width="5"/>
+        <line x1="250" y1="220" x2="270" y2="242" stroke="#1d1d1b" stroke-width="8" stroke-linecap="round"/>
+        <text x="150" y="282" text-anchor="middle" font-family="system-ui, Arial, sans-serif" font-size="24" font-weight="800" fill="#1d1d1b">Hacky McHackface</text>
+      </svg>
+      <figcaption><strong>A. The house that checks itself</strong>A cheeky house in a hard hat, inspecting its own mould spot. Ties straight to the damp challenge.</figcaption>
+    </figure>
+
+    <!-- B: the boat -->
+    <figure>
+      <svg viewBox="0 0 300 300" role="img" aria-labelledby="b-title">
+        <title id="b-title">A small boat with a face and a laptop for a sail, bobbing on waves, a nod to Boaty McBoatface</title>
+        <rect width="300" height="300" fill="#d6e6f2"/>
+        <!-- laptop sail -->
+        <line x1="150" y1="60" x2="150" y2="180" stroke="#1d1d1b" stroke-width="5"/>
+        <rect x="95" y="70" width="110" height="72" rx="6" fill="#1d5f8a" stroke="#1d1d1b" stroke-width="4"/>
+        <rect x="105" y="80" width="90" height="52" fill="#fff"/>
+        <text x="150" y="104" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="15" font-weight="700" fill="#1d5f8a">&lt;/hack&gt;</text>
+        <text x="150" y="124" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="12" fill="#505a5f">ship it</text>
+        <rect x="88" y="142" width="124" height="8" rx="3" fill="#b1b4b6" stroke="#1d1d1b" stroke-width="3"/>
+        <!-- hull with face -->
+        <path d="M60 180 L240 180 L215 225 L85 225 Z" fill="#c0392b" stroke="#1d1d1b" stroke-width="4" stroke-linejoin="round"/>
+        <circle cx="125" cy="198" r="6" fill="#1d1d1b"/><circle cx="175" cy="198" r="6" fill="#1d1d1b"/>
+        <path d="M135 210 Q150 220 165 210" fill="none" stroke="#1d1d1b" stroke-width="4" stroke-linecap="round"/>
+        <!-- waves -->
+        <path d="M0 232 Q25 218 50 232 T100 232 T150 232 T200 232 T250 232 T300 232 V300 H0 Z" fill="#1d5f8a"/>
+        <text x="150" y="282" text-anchor="middle" font-family="system-ui, Arial, sans-serif" font-size="24" font-weight="800" fill="#fff">Hacky McHackface</text>
+      </svg>
+      <figcaption><strong>B. Sail away, Hacky</strong>A nod to Boaty McBoatface: a smiling boat with a laptop for a sail, on the Clyde.</figcaption>
+    </figure>
+
+    <!-- C: the badge -->
+    <figure>
+      <svg viewBox="0 0 300 300" role="img" aria-labelledby="c-title">
+        <title id="c-title">A round badge with a winking face wearing big round glasses and a moustache, with the words Squad D around it</title>
+        <rect width="300" height="300" fill="#fff"/>
+        <circle cx="150" cy="140" r="110" fill="#ffdd00" stroke="#1d1d1b" stroke-width="6"/>
+        <circle cx="150" cy="140" r="68" fill="none" stroke="#1d1d1b" stroke-width="2" stroke-dasharray="6 6"/>
+        <!-- face -->
+        <circle cx="150" cy="140" r="58" fill="#fdd08a" stroke="#1d1d1b" stroke-width="4"/>
+        <!-- glasses -->
+        <circle cx="127" cy="128" r="17" fill="#fff" stroke="#1d1d1b" stroke-width="5"/>
+        <circle cx="173" cy="128" r="17" fill="#fff" stroke="#1d1d1b" stroke-width="5"/>
+        <line x1="144" y1="128" x2="156" y2="128" stroke="#1d1d1b" stroke-width="5"/>
+        <circle cx="127" cy="130" r="5" fill="#1d1d1b"/>
+        <path d="M164 130 Q173 124 182 130" fill="none" stroke="#1d1d1b" stroke-width="4" stroke-linecap="round"/>
+        <!-- moustache -->
+        <path d="M150 158 Q132 148 118 162 Q132 158 150 166 Q168 158 182 162 Q168 148 150 158 Z" fill="#1d1d1b"/>
+        <path d="M135 176 Q150 186 165 176" fill="none" stroke="#1d1d1b" stroke-width="4" stroke-linecap="round"/>
+        <!-- curved text -->
+        <defs><path id="arc" d="M60 140 A90 90 0 0 1 240 140"/><path id="arc2" d="M68 150 A82 82 0 0 0 232 150"/></defs>
+        <text font-family="system-ui, Arial, sans-serif" font-size="19" font-weight="800" fill="#1d1d1b" letter-spacing="2"><textPath href="#arc" startOffset="50%" text-anchor="middle">HACKY McHACKFACE</textPath></text>
+        <text font-family="system-ui, Arial, sans-serif" font-size="15" font-weight="700" fill="#1d1d1b" letter-spacing="3"><textPath href="#arc2" startOffset="50%" text-anchor="middle">SQUAD D · EST. 2026</textPath></text>
+        <text x="150" y="285" text-anchor="middle" font-family="system-ui, Arial, sans-serif" font-size="16" fill="#505a5f">Official seal of approval (not official)</text>
+      </svg>
+      <figcaption><strong>C. The seal of approval</strong>A winking, moustached badge. Works small, like a sticker or an icon.</figcaption>
+    </figure>
+
+  </div>
+</main>
+</body>
+</html>
