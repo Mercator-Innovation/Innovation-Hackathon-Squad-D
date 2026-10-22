@@ -1,0 +1,12 @@
+/* Progress tab. Its own file so it doesn't clash with styles.css. */
+.kpis { list-style: none; padding: 0; margin: 0 0 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+.kpis li { border-left: 6px solid var(--line); background: var(--soft); padding: 12px; }
+.kpis li.ok { border-color: var(--lower); }
+.kpis li.behind { border-color: var(--higher); }
+.kpis .num { display: block; font-size: 32px; font-weight: 700; line-height: 1.1; }
+.kpi-status { display: block; margin-top: 8px; color: var(--muted); }
+.kpi-status strong { color: var(--ink); }
+.kpi-trend td { white-space: nowrap; }
+.kpi-bar { display: inline-block; width: 80px; height: 10px; margin-right: 8px; background: var(--line); vertical-align: middle; }
+.kpi-bar i { display: block; height: 100%; background: var(--ink); }
+@media (max-width: 480px) { .kpi-bar { width: 40px; } }
