@@ -18,7 +18,7 @@
   --heat-1: #fff1c7;
   --heat-2: #fdd08a;
   --heat-3: #f59a4c;
-  --heat-4: #d9542b;
+  --heat-4: #c0392b; /* darker than the original #d9542b: white text on it was 4.0:1, below the 4.5:1 AA minimum */
   --heat-5: #8f1d16;
 
   --font: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
