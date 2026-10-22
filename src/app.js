@@ -392,11 +392,18 @@
       ? `<ul class="missing-list">${gaps.map((g) => `<li>${g.shared ? notSharedTag : missingTag}<strong>${esc(g.what)}:</strong> ${esc(g.next)}</li>`).join("")}</ul>`
       : `<p>${esc(Cd.nothingMissing)}</p>`;
 
-    // At most 5, so a home with many small factors doesn't read as an unreadable wall of reasons
+    // At most 5 to start, so a home with many small factors doesn't read as an
+    // unreadable wall of reasons. "View N more" reveals the rest in place.
     const sortedReasons = r.reasons.slice().sort((a, b) => b.points - a.points);
-    const why = sortedReasons.slice(0, 5)
-      .map((x) => `<li><span class="pts">+${x.points}</span> ${esc(x.label)} <span class="group">(${esc(x.group)})</span></li>`).join("")
-      + (sortedReasons.length > 5 ? `<li class="why-more">${esc(Cd.whyMore.replace("{n}", sortedReasons.length - 5))}</li>` : "");
+    let whyExpanded = false;
+    const reasonLi = (x) => `<li><span class="pts">+${x.points}</span> ${esc(x.label)} <span class="group">(${esc(x.group)})</span></li>`;
+    const renderWhyList = () => {
+      if (!sortedReasons.length) { $("why-list").innerHTML = "<li>Nothing flagged</li>"; return; }
+      const shown = whyExpanded ? sortedReasons : sortedReasons.slice(0, 5);
+      $("why-list").innerHTML = shown.map(reasonLi).join("")
+        + (sortedReasons.length > 5 ? `<li class="why-more"><button type="button" class="link-button" id="why-toggle">${esc(whyExpanded ? Cd.whyFewer : Cd.whyMore.replace("{n}", sortedReasons.length - 5))}</button></li>` : "");
+      if ($("why-toggle")) $("why-toggle").addEventListener("click", () => { whyExpanded = !whyExpanded; renderWhyList(); });
+    };
 
     const household = t ? `<p class="privacy">${esc(Cd.householdNote)}</p><dl>
         <dt>People</dt><dd>${t.people}</dd>
@@ -427,7 +434,7 @@
       <p class="score-line"><span class="badge ${r.band.id}">${esc(r.band.label)}</span></p>
       <div class="detail-column">
           <h3>${esc(Cd.why)}</h3>
-          <ul class="why">${why || "<li>Nothing flagged</li>"}</ul>
+          <ul class="why" id="why-list"></ul>
           <section class="missing-box" aria-labelledby="missing-heading">
             <h3 id="missing-heading">${esc(Cd.missing)} (${gaps.length})</h3>
             <p class="hint">${esc(Cd.missingHint)}</p>
@@ -470,6 +477,7 @@
     $("detail").focus();
     $("detail").scrollIntoView({ behavior: "smooth", block: "start" });
 
+    renderWhyList();
     $("close-detail").addEventListener("click", closeDetail);
     $("decide").addEventListener("submit", (e) => {
       e.preventDefault();
