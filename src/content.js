@@ -13,13 +13,13 @@ window.CONTENT = {
 
   today: {
     heading: "Today",
-    toReview: "higher-risk homes not yet reviewed",
+    allClear: "Nothing urgent today — you're all caught up.",
+    toReview: "higher-risk home{s} not yet reviewed", toReviewButton: "Review now",
     toReviewNone: "No higher-risk homes waiting to be reviewed",
-    needsEngineer: "visits booked with no engineer named yet",
+    needsEngineer: "visit{s} booked with no engineer named yet", needsEngineerButton: "Add an engineer",
     needsEngineerNone: "Every booked visit has an engineer named",
-    bookedToday: "visits booked today",
+    bookedToday: "visit{s} booked today", bookedTodayButton: "View visits",
     bookedTodayNone: "No visits booked today yet",
-    goTo: "Go to",
     quickVisit: {
       heading: "Book a visit",
       hint: "Know which home needs one? Jump straight to it.",
