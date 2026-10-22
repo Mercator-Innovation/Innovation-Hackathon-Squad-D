@@ -6,6 +6,7 @@
   <title>Homes at risk of damp and cold (prototype)</title>
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="display.css">
+  <link rel="stylesheet" href="reporting.css">
   <script src="theme.js"></script>
 </head>
 <body>
@@ -52,6 +53,7 @@
       <button type="button" role="tab" id="tab-areas" aria-controls="panel-areas" aria-selected="false" tabindex="-1"></button>
       <button type="button" role="tab" id="tab-visits" aria-controls="panel-visits" aria-selected="false" tabindex="-1"></button>
       <button type="button" role="tab" id="tab-notes" aria-controls="panel-notes" aria-selected="false" tabindex="-1"></button>
+      <button type="button" role="tab" id="tab-progress" aria-controls="panel-progress" aria-selected="false" tabindex="-1"></button>
     </div>
 
     <div role="tabpanel" id="panel-homes" aria-labelledby="tab-homes">
@@ -100,6 +102,10 @@
     </section>
     </div>
 
+    <div role="tabpanel" id="panel-progress" aria-labelledby="tab-progress" hidden>
+    <section aria-labelledby="progress-heading" id="progress"></section>
+    </div>
+
     <section id="detail" class="detail" hidden tabindex="-1" aria-labelledby="detail-heading"></section>
   </main>
 
@@ -111,5 +117,7 @@
   <script src="data/cases.js"></script>
   <script src="risk.js"></script>
   <script src="app.js"></script>
+  <script src="data/progress.js"></script>
+  <script src="reporting.js"></script>
 </body>
 </html>
