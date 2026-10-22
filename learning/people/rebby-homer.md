@@ -30,6 +30,9 @@ ai_use_week_after:
 ## During
 <!-- Claude adds one line per moment: prompts that worked (word for word), dead ends, surprises, things done outside my usual job, what made working as a squad easier or harder -->
 - 15:59 prompt: "is there any data collected from the pilot sensors" → no public data from Cloch's pilot, but similar pilots (Glasgow, London) showed what sensor data looks like (temperature and humidity every 30 minutes), so we could make realistic pretend readings
+- 18:12 prompt: "make the progress tab kpi's look better and more colourful and easier to see and report progress , using RAG status" → Claude redesigned the Progress tab I'd built with red, amber and green cards and a summary. I'm building more with Claude and gaining more confidence than when we started
+- 18:12 Enjoying the team dynamic and collaboration: everyone building on each other's work (my sensor readings and paper notes went into Rob's first version, and my Progress tab uses Faye's Cloch KPIs)
+- 18:13 It has been great collaboration tooling
 
 ## At 19:00
 - What I worked on: <answers>

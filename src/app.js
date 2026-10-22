@@ -331,15 +331,13 @@
     $("homes").innerHTML = `<thead><tr>${head}</tr></thead><tbody>` + shown.map((h) => {
       // The Age column already shows when it was built, so don't repeat that reason here too
       const top = h.risk.reasons.filter((r) => !/^Built /.test(r.short)).sort((a, b) => b.points - a.points).slice(0, 3);
-      const d = decisions[h.id];
       return `<tr>
         <th scope="row">${h.id}</th>
         <td>${esc(h.area)}</td>
         <td>${esc(h.type)}</td>
         <td class="num">${h.built}</td>
-        <td><span class="badge ${h.risk.band.id}">${esc(h.risk.band.label)}</span></td>
+        <td><span class="badge ${h.risk.band.id}">${esc(h.risk.band.short)}</span></td>
         <td><ul class="reasons">${top.map((r) => `<li>${esc(r.short)}</li>`).join("")}</ul></td>
-        <td class="decision">${d && d.choice ? esc(d.choice) : "Not reviewed"}</td>
         <td><button type="button" class="secondary" data-id="${h.id}" style="margin:0">${esc(C.list.review)} <span class="visually-hidden">${h.id}</span></button></td>
       </tr>`;
     }).join("") + "</tbody>";
@@ -416,9 +414,6 @@
     if (h.dpc === "Unknown") gaps.push(G.dpc);
     if (!h.sensor) gaps.push(G.sensor);
     else if (h.sensor.missing > 0) gaps.push({ what: G.sensorGaps.what, next: G.sensorGaps.next.replace("{n}", h.sensor.missing) });
-    const missingList = gaps.length
-      ? `<ul class="missing-list">${gaps.map((g) => `<li>${g.shared ? notSharedTag : missingTag}<strong>${esc(g.what)}:</strong> ${esc(g.next)}</li>`).join("")}</ul>`
-      : `<p>${esc(Cd.nothingMissing)}</p>`;
 
     // At most 5 to start, so a home with many small factors doesn't read as an
     // unreadable wall of reasons. "View N more" reveals the rest in place.
@@ -471,11 +466,7 @@
       <div class="detail-column">
           <h3>${esc(Cd.why)}</h3>
           <ul class="why" id="why-list"></ul>
-          <section class="missing-box" aria-labelledby="missing-heading">
-            <h3 id="missing-heading">${esc(Cd.missing)} (${gaps.length})</h3>
-            <p class="hint">${esc(Cd.missingHint)}</p>
-            ${missingList}
-          </section>
+          ${gaps.length ? `<p class="missing-box missing-note">${esc(Cd.missing)}</p>` : ""}
           <h3>${esc(Cd.home)}</h3>
           <dl>
             <dt>Type</dt><dd>${esc(h.type)}, ${esc(h.size)}</dd>
