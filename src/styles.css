@@ -109,10 +109,6 @@ h3 { font-size: 18px; margin: 20px 0 8px; }
 .today-minor { list-style: none; padding: 0; margin: 0 0 16px; display: flex; flex-direction: column; gap: 6px; color: var(--muted); }
 .today-minor .num { font-weight: 700; color: var(--ink); }
 .today-minor .link-button { padding: 0; }
-.quick-visit { border: 1px solid var(--line); padding: 12px; max-width: 420px; }
-.quick-visit h3 { margin: 0 0 4px; font-size: 16px; }
-.quick-visit input[type="text"] { font: inherit; padding: 6px 8px; border: 2px solid var(--ink); background: var(--surface); color: var(--ink); width: 100%; max-width: 220px; }
-.quick-visit button { margin-top: 8px; }
 
 /* Filters */
 .filters { display: flex; flex-wrap: wrap; gap: 12px 16px; align-items: flex-end; padding: 12px; border: 1px solid var(--line); margin-bottom: 20px; }
