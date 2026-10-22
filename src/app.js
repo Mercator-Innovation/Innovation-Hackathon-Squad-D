@@ -265,7 +265,27 @@
     state.selected = id;
     renderMap(filtered());
     const t = h.tenant, r = h.risk, Cd = C.detail;
-    const yes = (v) => (v === null || v === undefined ? "Not known" : v ? "Yes" : "No");
+    const missingTag = `<span class="tag">${esc(Cd.missingTag)}</span>`;
+    const notSharedTag = `<span class="tag">${esc(Cd.notSharedTag)}</span>`;
+    // A health answer we don't have: not asked yet (missing) or the household chose not to share
+    const healthGap = t && t.consent !== "Yes" ? (t.consent === "No" ? notSharedTag + "Chose not to share" : missingTag + "Not asked") : "";
+    const yes = (v) => (v === null || v === undefined ? (healthGap || missingTag + "Not known") : v ? "Yes" : "No");
+    // A row in a list of facts, highlighted when we don't have the answer
+    const row = (label, value, missing) => missing
+      ? `<dt class="missing">${label}</dt><dd class="missing">${value}</dd>`
+      : `<dt>${label}</dt><dd>${value}</dd>`;
+
+    // What's missing, and what to do about each gap
+    const G = Cd.gaps, gaps = [];
+    if (!t) gaps.push(G.vacant);
+    else if (t.consent === "No") gaps.push(Object.assign({ shared: true }, G.healthNotShared));
+    else if (t.consent !== "Yes") gaps.push(G.healthNotAsked);
+    if (h.dpc === "Unknown") gaps.push(G.dpc);
+    if (!h.sensor) gaps.push(G.sensor);
+    else if (h.sensor.missing > 0) gaps.push({ what: G.sensorGaps.what, next: G.sensorGaps.next.replace("{n}", h.sensor.missing) });
+    const missingList = gaps.length
+      ? `<ul class="missing-list">${gaps.map((g) => `<li>${g.shared ? notSharedTag : missingTag}<strong>${esc(g.what)}:</strong> ${esc(g.next)}</li>`).join("")}</ul>`
+      : `<p>${esc(Cd.nothingMissing)}</p>`;
 
     const why = r.reasons.slice().sort((a, b) => b.points - a.points)
       .map((x) => `<li><span class="pts">+${x.points}</span> ${esc(x.label)} <span class="group">(${esc(x.group)})</span></li>`).join("");
@@ -275,8 +295,8 @@
         <dt>Child under 5</dt><dd>${yes(t.under5)}</dd>
         <dt>Someone over 75</dt><dd>${yes(t.over75)}</dd>
         <dt>Agreed to share health</dt><dd>${esc(t.consent)}</dd>
-        <dt>Breathing condition</dt><dd>${yes(t.breathing)}</dd>
-        <dt>Other health condition</dt><dd>${yes(t.otherHealth)}</dd>
+        ${row("Breathing condition", yes(t.breathing), t.breathing === null)}
+        ${row("Other health condition", yes(t.otherHealth), t.otherHealth === null)}
         <dt>Disability</dt><dd>${yes(t.disability)}</dd>
         <dt>Low income</dt><dd>${yes(t.lowIncome)}</dd>
         <dt>Prepayment meter</dt><dd>${yes(t.prepayment)}</dd>
@@ -297,11 +317,14 @@
       <button type="button" class="link-button" id="close-detail">${esc(Cd.close)}</button>
       <h2 id="detail-heading">${h.id}, ${esc(h.area)}</h2>
       <p class="score-line">Score <strong>${r.score}</strong> <span class="badge ${r.band.id}">${esc(r.band.label)}</span></p>
-      <div class="detail-grid">
-        <div>
+      <div class="detail-column">
           <h3>${esc(Cd.why)}</h3>
           <ul class="why">${why || "<li>Nothing flagged</li>"}</ul>
-          ${r.unknowns.length ? `<h3>${esc(Cd.unknown)}</h3><ul class="unknowns">${r.unknowns.map((u) => `<li>${esc(u)}</li>`).join("")}</ul>` : ""}
+          <section class="missing-box" aria-labelledby="missing-heading">
+            <h3 id="missing-heading">${esc(Cd.missing)} (${gaps.length})</h3>
+            <p class="hint">${esc(Cd.missingHint)}</p>
+            ${missingList}
+          </section>
           <h3>${esc(Cd.home)}</h3>
           <dl>
             <dt>Type</dt><dd>${esc(h.type)}, ${esc(h.size)}</dd>
@@ -313,12 +336,11 @@
             <dt>Heating</dt><dd>${esc(h.heating)}</dd>
             <dt>Ventilation</dt><dd>${esc(h.ventilation)}</dd>
             <dt>Exposure</dt><dd>${esc(h.exposure)}</dd>
-            <dt>Damp-proof course</dt><dd>${esc(h.dpc)}</dd>
+            ${row("Damp-proof course", h.dpc === "Unknown" ? missingTag + "Not checked" : esc(h.dpc), h.dpc === "Unknown")}
+            ${h.sensor ? "" : row("Sensor", missingTag + "No sensor in this home", true)}
           </dl>
           <h3>${esc(Cd.reports)}</h3>
           ${reports}
-        </div>
-        <div>
           ${h.sensor ? `<h3>${esc(Cd.sensor)}</h3><p class="hint">${esc(Cd.sensorHint)}</p><div class="chart">${chart(h.sensor)}</div>
             <p class="hint">${Math.round(h.sensor.dampShare * 100)}% of the week at 70% or more. Average ${h.sensor.avgTemp.toFixed(1)}°C. Pattern: ${esc(h.sensor.story.toLowerCase())}.</p>` : ""}
           <h3>${esc(Cd.household)}</h3>
@@ -335,7 +357,6 @@
             <textarea id="note">${esc(d.note || "")}</textarea>
             <p><button type="submit" class="primary">${esc(Cd.save)}</button><span class="saved" id="saved" aria-live="polite"></span></p>
           </form>
-        </div>
       </div>`;
     $("detail").hidden = false;
     $("detail").focus();
