@@ -42,17 +42,11 @@
   $("more").textContent = C.list.more;
   $("cases-heading").textContent = C.cases.heading;
   $("today-heading").textContent = C.today.heading;
-  $("quick-visit-heading").textContent = C.today.quickVisit.heading;
-  $("quick-visit-hint").textContent = C.today.quickVisit.hint;
-  $("quick-visit-label").textContent = C.today.quickVisit.label;
-  $("quick-visit-id").placeholder = C.today.quickVisit.placeholder;
-  $("quick-visit-button").textContent = C.today.quickVisit.button;
   document.querySelector('label[for="show-dots"]').textContent = C.map.showDots;
   document.querySelector('label[for="show-pulse"]').textContent = C.map.pulse;
 
   setupFilters();
   setupTabs();
-  setupQuickVisit();
   render();
 
   // ---------- Tabs: one view at a time. Arrow keys move between tabs.
@@ -203,19 +197,6 @@
       showTab(task.tab);
       $(task.tab).focus();
     }));
-  }
-
-  // ---------- Quick visit: jump straight to a home by reference and start a visit
-  function setupQuickVisit() {
-    $("quick-visit").addEventListener("submit", (e) => {
-      e.preventDefault();
-      const id = $("quick-visit-id").value.trim().toUpperCase();
-      const h = byId[id];
-      $("quick-visit-message").textContent = h ? "" : C.today.quickVisit.notFound;
-      if (!h) return;
-      $("quick-visit-id").value = "";
-      openDetail(id, { preselectVisit: true });
-    });
   }
 
   // ---------- Heat map
@@ -373,7 +354,7 @@
   }
 
   // ---------- Detail for one home
-  function openDetail(id, opts) {
+  function openDetail(id) {
     const h = byId[id];
     if (!h) return;
     state.selected = id;
@@ -425,8 +406,7 @@
       : `<p>${esc(Cd.noReports)}</p>`;
 
     const d = decisions[h.id] || {};
-    const preselect = opts && opts.preselectVisit && !d.choice ? Cd.options[0] : d.choice;
-    const options = Cd.options.map((o, i) => `<div class="radio"><input type="radio" name="decision" id="opt-${i}" value="${esc(o)}"${preselect === o ? " checked" : ""}><label for="opt-${i}">${esc(o)}</label></div>`).join("");
+    const options = Cd.options.map((o, i) => `<div class="radio"><input type="radio" name="decision" id="opt-${i}" value="${esc(o)}"${d.choice === o ? " checked" : ""}><label for="opt-${i}">${esc(o)}</label></div>`).join("");
 
     $("detail").innerHTML = `
       <button type="button" class="link-button" id="close-detail">${esc(Cd.close)}</button>

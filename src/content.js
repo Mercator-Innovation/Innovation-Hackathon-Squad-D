@@ -19,15 +19,7 @@ window.CONTENT = {
     needsEngineer: "visit{s} booked with no engineer named yet", needsEngineerButton: "Add an engineer",
     needsEngineerNone: "Every booked visit has an engineer named",
     bookedToday: "visit{s} booked today", bookedTodayButton: "View visits",
-    bookedTodayNone: "No visits booked today yet",
-    quickVisit: {
-      heading: "Book a visit",
-      hint: "Know which home needs one? Jump straight to it.",
-      label: "Home reference",
-      placeholder: "For example, H0123",
-      button: "Find and book",
-      notFound: "No home with that reference. Check the letter and numbers, for example H0123."
-    }
+    bookedTodayNone: "No visits booked today yet"
   },
 
   filters: {
