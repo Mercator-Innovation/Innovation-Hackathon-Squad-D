@@ -410,7 +410,7 @@
     $("detail").innerHTML = `
       <button type="button" class="link-button" id="close-detail">${esc(Cd.close)}</button>
       <h2 id="detail-heading">${h.id}, ${esc(h.area)}</h2>
-      <p class="score-line">Score <strong>${r.score}</strong> <span class="badge ${r.band.id}">${esc(r.band.label)}</span></p>
+      <p class="score-line"><span class="badge ${r.band.id}">${esc(r.band.label)}</span></p>
       <div class="detail-column">
           <h3>${esc(Cd.why)}</h3>
           <ul class="why">${why || "<li>Nothing flagged</li>"}</ul>
