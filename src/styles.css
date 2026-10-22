@@ -76,6 +76,11 @@ main { max-width: 1200px; margin: 0 auto; padding: 16px; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 
 h1 { font-size: 32px; line-height: 1.2; margin: 16px 0 8px; }
+/* The squad logo, top left beside the title */
+.title-row { display: flex; align-items: center; gap: 16px; margin-top: 12px; }
+.title-row h1 { margin: 0; }
+.logo { width: 96px; height: 96px; flex: none; }
+@media (max-width: 480px) { .logo { width: 72px; height: 72px; } .title-row { gap: 12px; } }
 h2 { font-size: 22px; margin: 0 0 4px; }
 h3 { font-size: 18px; margin: 20px 0 8px; }
 .lead { font-size: 18px; color: var(--muted); max-width: 70ch; margin: 0 0 20px; }
