@@ -49,6 +49,12 @@ function dampSince(home, fromMonth) {
   return home.reports.filter((r) => r.damp && r.month >= fromMonth).length;
 }
 
+// Someone in the home may be more vulnerable to damp and cold. The map pulses these homes.
+// Only uses what the household has told us: health only counts where they shared it.
+window.RISK.isVulnerable = function (tenant) {
+  return !!tenant && (tenant.under5 || tenant.over75 || tenant.breathing === true || tenant.otherHealth === true || tenant.disability);
+};
+
 // Returns { score, band, reasons: [{group, label, points}], unknowns: [text] }
 window.RISK.assess = function (home, tenant, sensor) {
   const reasons = [];
