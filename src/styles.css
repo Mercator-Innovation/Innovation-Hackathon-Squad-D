@@ -101,7 +101,7 @@ h3 { font-size: 18px; margin: 20px 0 8px; }
 .today-hero .num { display: block; font-size: 40px; font-weight: 700; line-height: 1.1; }
 .today-hero p { margin: 0 0 12px; font-size: 18px; }
 .today-hero.clear p { margin: 0; color: var(--muted); }
-.today-minor { list-style: none; padding: 0; margin: 0 0 16px; display: flex; flex-wrap: wrap; gap: 8px 24px; color: var(--muted); }
+.today-minor { list-style: none; padding: 0; margin: 0 0 16px; display: flex; flex-direction: column; gap: 6px; color: var(--muted); }
 .today-minor .num { font-weight: 700; color: var(--ink); }
 .today-minor .link-button { padding: 0; }
 .quick-visit { border: 1px solid var(--line); padding: 12px; max-width: 420px; }
