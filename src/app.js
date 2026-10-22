@@ -141,12 +141,21 @@
   }
 
   // ---------- Summary
+  function withinDays(iso, days) {
+    const diff = (new Date() - new Date(iso)) / 86400000;
+    return diff >= 0 && diff < days;
+  }
+
   function renderSummary(list) {
-    const count = (id) => list.filter((h) => h.risk.band.id === id).length;
+    const now = new Date();
+    const thisMonth = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0");
+    const reviewedThisWeek = list.filter((h) => decisions[h.id] && decisions[h.id].when && withinDays(decisions[h.id].when, 7)).length;
+    const newReports = list.reduce((sum, h) => sum + h.reports.filter((r) => r.damp && r.month === thisMonth).length, 0);
+    const noContact = list.filter((h) => h.tenant && h.tenant.monthsSinceContact >= 12).length;
     const items = [
-      ["higher", count("higher"), C.summary.higher],
-      ["medium", count("medium"), C.summary.medium],
-      ["lower", count("lower"), C.summary.lower],
+      ["reviewed", reviewedThisWeek, C.summary.reviewedThisWeek],
+      ["reports", newReports, C.summary.newReports],
+      ["no-contact", noContact, C.summary.noContact],
       ["sensors", list.filter((h) => h.sensor).length, C.summary.sensors]
     ];
     $("summary").innerHTML = items.map(([cls, n, text]) => `<li class="${cls}"><span class="num">${n}</span>${esc(text)}</li>`).join("");

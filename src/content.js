@@ -5,9 +5,9 @@ window.CONTENT = {
   lead: "Find the homes and households most at risk, before anyone gets ill or reports a problem. The score helps you choose who to look at first. You make the call.",
 
   summary: {
-    higher: "homes at higher risk",
-    medium: "homes at medium risk",
-    lower: "homes at lower risk",
+    reviewedThisWeek: "homes reviewed this week",
+    newReports: "new damp or mould reports this month",
+    noContact: "tenants not contacted in 12+ months",
     sensors: "homes in the sensor pilot"
   },
 
