@@ -13,5 +13,5 @@ Drafted by Faye. About 250 words, roughly a minute of silent reading at talking 
 
 ## One surprise from the tooling (90 to 120s)
 
-- Joe, our content designer, ended up doing almost none of his "usual" job. He researched damp risk factors and offline tenants, built a working HTML sketch of a new screen, redesigned the review page, split the whole site into accessible tabs, and designed the squad's logo, wobble animation included. None of that is content design. It's everything the squad needed, done by whoever picked it up.
+- Joe, our content designer, ended up doing almost none of his "usual" job. He researched damp risk factors and offline tenants, built a working HTML sketch of a new screen, redesigned the review page, split the whole site into accessible tabs, and designed the squad's logo (Rebby then made it wobble and spin). None of that is content design. It's everything the squad needed, done by whoever picked it up.
 - He also caught a privacy problem: the engineers' visit list was asking them to log tenants' health information. Joe had it taken out, so engineers only check the home. Health stays with housing officers, and only if the household agrees to share it.
