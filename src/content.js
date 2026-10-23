@@ -140,7 +140,8 @@ window.CONTENT = {
     evidence: "Evidence",
     noEvidence: "No photos yet",
     addPhoto: "Add photo",
-    viewPhoto: "Photo {n} from this visit. Opens full size in a new tab.",
+    viewPhoto: "View photo {n} from this visit, larger",
+    closePhoto: "Close photo",
     note: "Note (optional)",
     save: "Confirm",
     saved: "Engineer booked"

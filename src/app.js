@@ -48,7 +48,26 @@
 
   setupFilters();
   setupTabs();
+  setupLightbox();
   render();
+
+  // ---------- Lightbox: click a photo to see it bigger, without leaving the page
+  function setupLightbox() {
+    $("lightbox-close").textContent = C.detail.closePhoto;
+    $("lightbox-close").addEventListener("click", closeLightbox);
+    $("lightbox").addEventListener("click", (e) => { if (e.target === $("lightbox")) closeLightbox(); });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("lightbox").hidden) closeLightbox(); });
+  }
+  function openLightbox(src, alt) {
+    $("lightbox-img").src = src;
+    $("lightbox-img").alt = alt;
+    $("lightbox").hidden = false;
+    $("lightbox-close").focus();
+  }
+  function closeLightbox() {
+    $("lightbox").hidden = true;
+    $("lightbox-img").src = "";
+  }
 
   // ---------- Tabs: one view at a time. Arrow keys move between tabs.
   function setupTabs() {
@@ -432,8 +451,9 @@
     const renderEvidence = () => {
       const photos = (decisions[h.id] && decisions[h.id].photos) || [];
       $("evidence-list").innerHTML = photos.length
-        ? photos.map((src, i) => `<li><a href="${src}" target="_blank" rel="noopener"><img src="${src}" alt="${esc(Cd.viewPhoto.replace("{n}", i + 1))}"></a></li>`).join("")
+        ? photos.map((src, i) => `<li><button type="button" class="photo-thumb" data-src="${src}" data-alt="${esc(Cd.viewPhoto.replace("{n}", i + 1))}"><img src="${src}" alt="${esc(Cd.viewPhoto.replace("{n}", i + 1))}"></button></li>`).join("")
         : `<li class="hint">${esc(Cd.noEvidence)}</li>`;
+      $("evidence-list").querySelectorAll(".photo-thumb").forEach((b) => b.addEventListener("click", () => openLightbox(b.dataset.src, b.dataset.alt)));
     };
 
     const household = t ? `<p class="privacy">${esc(Cd.householdNote)}</p><dl>
