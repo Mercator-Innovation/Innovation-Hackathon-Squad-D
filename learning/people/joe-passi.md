@@ -9,10 +9,14 @@ ai_use_before: 2
 hopes: [other-jobs]
 feeling: unsure
 # At 19:00
-worked_on: []
-outside_usual_job:
-got_in_way: []
-ai_use_after:
+worked_on: [code, design, content, research]
+outside_usual_job: a-lot
+got_in_way: [time]
+ai_use_after: 2
+enjoyed: loved
+pace: right
+worked_best: [building, mixed-squad]
+again: definitely
 # In the week after
 specialist:
 helped_squad: []
@@ -48,10 +52,15 @@ ai_use_week_after:
 - Updated the show and tell outline: added my privacy catch to the surprise section, and fixed the logo credit (Rebby made it wobble and spin, checked in the history). Prompts: "add my privacy catch to the outline", "yes, fix the wobble credit"
 
 ## At 19:00
-- What I worked on: <answers>
-- How much of it was outside my usual job: <answer>
-- What got in the way: <answers>
-- How much I'd use AI tools in my work now: <answer>
+- What I worked on: Code or features; The design or the look; The words people see; Research or finding things out
+- How much of it was outside my usual job: A lot
+- What got in the way: Not enough time
+- How much I'd use AI tools in my work now: Now and then
+- How much I enjoyed the hackathon: Loved it
+- The pace of the afternoon: About right
+- What worked best for me: Building with Claude; Working in a mixed squad
+- Would I take part in another: Definitely
+- One thing to change next time: Perhaps half an hour extra to work on it. We'd really just hit our stride when it all came to an end
 
 ## In the week after
 - Did I still need a human specialist: <answer>, for <what>
