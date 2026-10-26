@@ -14,10 +14,10 @@ outside_usual_job:
 got_in_way: []
 ai_use_after:
 # In the week after
-specialist:
-helped_squad: []
-idea_where: []
-ai_use_week_after:
+specialist: often
+helped_squad: [screen]
+idea_where: [internal]
+ai_use_week_after: 2
 ---
 
 # Rebby Homer: learning log
@@ -41,11 +41,11 @@ ai_use_week_after:
 - How much I'd use AI tools in my work now: <answer>
 
 ## In the week after
-- Did I still need a human specialist: <answer>, for <what>
-- What helped most when building as a squad: <answers>
-- The most useful thing I learned: <in my words>
-- **One idea to carry forward:** <in my words>, and where it could fit: <answers>
-- How much I expect to use AI tools from now on: <answer>
+- Did I still need a human specialist: Often, for ideas and brainstorming and discussing improvements before asking claude to make them
+- What helped most when building as a squad: The shared screen
+- The most useful thing I learned: How quickly an idea can turn into a useable and clickable prototype
+- **One idea to carry forward:** using data to display in graphical format, and where it could fit: Internal work
+- How much I expect to use AI tools from now on: Now and then
 
 ## Three-week check-in (around 12 Nov)
 - Did I try, share or suggest my idea anywhere? What happened, or what got in the way?
