@@ -88,8 +88,8 @@ window.CONTENT = {
     engineerHint: "e.g. Pat Nguyen",
     visitType: "Visit type",
     nothingMissing: "Nothing missing — just confirm what's already known",
-    addPhoto: "Add photo",
-    viewPhoto: "Photo {n} from the visit to {home}. Opens full size in a new tab.",
+    evidenceCount: "{n} photo{s} on file",
+    noEvidence: "No evidence uploaded",
     review: "Open"
   },
 
@@ -118,8 +118,7 @@ window.CONTENT = {
     noReports: "Nothing reported in the last five years. That doesn't mean there's no problem: some people never report.",
     sensor: "Sensor readings, 12 to 18 October",
     sensorHint: "How damp the air is (%). Above the dashed line (70%), mould is more likely.",
-    decide: "Your decision",
-    decideHint: "The risk level is a guide. What should happen next?",
+    decide: "Engineer booked",
     options: [
       "Visit and check the home",
       "Phone the household",
@@ -128,7 +127,8 @@ window.CONTENT = {
       "Book a repair",
       "No action for now"
     ],
-    engineer: "Engineer visiting (optional)",
+    engineer: "Engineer name",
+    engineerMissing: "Enter the engineer's name",
     engineerHint: "e.g. Pat Nguyen",
     visitType: "Visit type",
     visitTypeOptions: [
@@ -137,8 +137,13 @@ window.CONTENT = {
       "Installing a sensor",
       "Urgent visit"
     ],
+    evidence: "Evidence",
+    noEvidence: "No photos yet",
+    addPhoto: "Add photo",
+    viewPhoto: "View photo {n} from this visit, larger",
+    closePhoto: "Close photo",
     note: "Note (optional)",
-    save: "Save decision",
-    saved: "Decision saved"
+    save: "Confirm",
+    saved: "Engineer booked"
   }
 };

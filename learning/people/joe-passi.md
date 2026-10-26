@@ -9,10 +9,14 @@ ai_use_before: 2
 hopes: [other-jobs]
 feeling: unsure
 # At 19:00
-worked_on: []
-outside_usual_job:
-got_in_way: []
-ai_use_after:
+worked_on: [code, design, content, research]
+outside_usual_job: a-lot
+got_in_way: [time]
+ai_use_after: 2
+enjoyed: loved
+pace: right
+worked_best: [building, mixed-squad]
+again: definitely
 # In the week after
 specialist:
 helped_squad: []
@@ -42,12 +46,21 @@ ai_use_week_after:
 - Designed the squad logo, outside my usual job: Claude drew three options, I picked the house in a hard hat, then had it made round with "Hacky" above the house and added top left of the prototype, small but legible. Asked to add Cloch's real logo too, but Claude flagged that a prototype mustn't pass itself off as a real organisation's brand, so I left it out. Prompts: "can you design an amusing logo for Hacky McHackface?", then "Logo A. Can you move 'Hacky' above the house and make it circular. Then add the logo to the top left of the prototype, quite small but still legible."
 - My assigned job from the look together: the content for "Homes to look at first". Removed the Score column, wrote the new hint myself ("Homes at highest risk first."), and changed the intro and Review page to talk about "risk level", not "score", keeping the points in the Review section. Prompts: "I think the score column is unnecessary in this view. So if you remove that column, you'd need to reword the text under the heading", then "Can you change those other lines that refer to the score?"
 - Surprise: after merging with Freya's changes, the list showed "undefined" and Claude thought it had broken something. It was only the test browser using an old saved copy of a file. A fresh reload (Cmd+Shift+R) fixed it. Lesson: when lots of people share at once, reload fresh before panicking.
+- More content simplifying: Risk badges in the list now say High, Medium and Low (but "Higher risk" stays elsewhere, where there's no column heading); took the Decision column out of the list; cut the Review page's missing box down to just "Information missing". Prompts: "In the review section, can you remove the content from the What's missing highlight box and just say 'Information missing'", "remove the Decision column from the Homes to look at first table", "For the coloured Risk boxes under the Risk column, can you change to High, Medium and Low"
+- Joined up two people's work: added the missing information from the officer view (damp-proof course, sensor) into Faye's engineer view, so engineers see "Please check while you're there" when they pick a home, home details only, never health. Earlier, changed the Review page so officers book an engineer by name with a Confirm button. Prompts: "Can you add the things that need checking from the main prototype into the engineer view. So the engineer knows what the missing data is", "Can you change the heading in the Review section from Your decision to Engineer booked And get rid of all those bullets and replace with a text box for Engineer name and Change button to Confirm"
+- Faye's show and tell outline uses my afternoon as the "surprise from the tooling": a content designer who did almost no content design (research, a working sketch, the Review page, accessible tabs, the logo), and my "undefined" false alarm as the thing that didn't work. One fix needed: the logo's wobble was added by squad mates, not me. My privacy catch (no health questions for engineers) isn't in it yet.
+- Updated the show and tell outline: added my privacy catch to the surprise section, and fixed the logo credit (Rebby made it wobble and spin, checked in the history). Prompts: "add my privacy catch to the outline", "yes, fix the wobble credit"
 
 ## At 19:00
-- What I worked on: <answers>
-- How much of it was outside my usual job: <answer>
-- What got in the way: <answers>
-- How much I'd use AI tools in my work now: <answer>
+- What I worked on: Code or features; The design or the look; The words people see; Research or finding things out
+- How much of it was outside my usual job: A lot
+- What got in the way: Not enough time
+- How much I'd use AI tools in my work now: Now and then
+- How much I enjoyed the hackathon: Loved it
+- The pace of the afternoon: About right
+- What worked best for me: Building with Claude; Working in a mixed squad
+- Would I take part in another: Definitely
+- One thing to change next time: Perhaps half an hour extra to work on it. We'd really just hit our stride when it all came to an end
 
 ## In the week after
 - Did I still need a human specialist: <answer>, for <what>

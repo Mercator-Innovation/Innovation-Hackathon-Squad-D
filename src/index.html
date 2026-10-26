@@ -13,6 +13,8 @@
   <a class="skip" href="#list">Skip to the list of homes</a>
   <div class="top-bar">
     <div class="banner" id="banner"></div>
+    <a href="report.html" style="color:var(--banner-ink);font-size:14px;font-weight:600;padding:4px 12px;border:2px solid var(--banner-ink);text-decoration:none">Engineer view</a>
+    <a href="https://claude.ai/artifact/LZeXvChFQGNqh2rmHb2s5w" target="_blank" rel="noopener" style="color:var(--banner-ink);font-size:14px;font-weight:600;padding:4px 12px;border:2px solid var(--banner-ink);text-decoration:none">User journeys</a>
     <details class="display-settings">
       <summary>Display settings</summary>
       <div class="display-panel">
@@ -24,6 +26,7 @@
             <option value="standard">Standard</option>
             <option value="redgreen">Easier for red-green colour blindness</option>
             <option value="blueyellow">Easier for blue-yellow colour blindness</option>
+            <option value="mono">Black and white</option>
           </select>
         </div>
       </div>
@@ -105,6 +108,11 @@
 
     <section id="detail" class="detail" hidden tabindex="-1" aria-labelledby="detail-heading"></section>
   </main>
+
+  <div id="lightbox" class="lightbox" hidden>
+    <button type="button" id="lightbox-close" class="lightbox-close"></button>
+    <img id="lightbox-img" src="" alt="">
+  </div>
 
   <script src="content.js"></script>
   <script src="data/areas.js"></script>

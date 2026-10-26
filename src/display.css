@@ -43,6 +43,20 @@
   --heat-5: #7a0177;
 }
 
+/* Black and white: greys that get darker with risk (white text on them is at least 4.5:1),
+   and everything else on the page, photos and logo included, turned grey */
+:root[data-colours="mono"] {
+  --higher: #000000;
+  --medium: #4d4d4d;
+  --lower: #767676;
+  --heat-1: #f2f2f2;
+  --heat-2: #cccccc;
+  --heat-3: #999999;
+  --heat-4: #595959;
+  --heat-5: #262626;
+}
+:root[data-colours="mono"] body { filter: grayscale(1); }
+
 /* ---------- High contrast, light */
 :root[data-contrast="high"] {
   --ink: #000000;
