@@ -9,10 +9,14 @@ ai_use_before: 2
 hopes: [see-claude, other-jobs, new-people]
 feeling: excited
 # At 19:00
-worked_on: []
-outside_usual_job:
-got_in_way: []
-ai_use_after:
+worked_on: [design, research]
+outside_usual_job: a-lot
+got_in_way: [time]
+ai_use_after: 2
+enjoyed: loved
+pace: right
+worked_best: [building, mixed-squad, screen-badges, setup]
+again: definitely
 # In the week after
 specialist: often
 helped_squad: [screen]
@@ -35,10 +39,15 @@ ai_use_week_after: 2
 - 18:13 It has been great collaboration tooling
 
 ## At 19:00
-- What I worked on: <answers>
-- How much of it was outside my usual job: <answer>
-- What got in the way: <answers>
-- How much I'd use AI tools in my work now: <answer>
+- What I worked on: The design or the look; Research or finding things out
+- How much of it was outside my usual job: A lot
+- What got in the way: Not enough time
+- How much I'd use AI tools in my work now: Now and then
+- How much I enjoyed the hackathon: Loved it
+- The pace of the afternoon: About right
+- What worked best for me: Building with Claude; Working in a mixed squad; The shared screen and badges; The setup before the day
+- Would I take part in another: Definitely
+- One thing to change next time: Nothing
 
 ## In the week after
 - Did I still need a human specialist: Often, for ideas and brainstorming and discussing improvements before asking claude to make them
