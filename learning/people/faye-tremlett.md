@@ -22,6 +22,8 @@ specialist: never
 helped_squad: [screen, small-shares, talking]
 idea_where: [internal, client]
 ai_use_week_after: 1
+# Three-week check-in
+idea_tried: blocked
 ---
 
 # Faye Tremlett: learning log
@@ -54,4 +56,4 @@ ai_use_week_after: 1
 - How much I expect to use AI tools from now on: Never or hardly ever
 
 ## Three-week check-in (around 12 Nov)
-- Did I try, share or suggest my idea anywhere? What happened, or what got in the way?
+- Did I try, share or suggest my idea anywhere? Not yet, something got in the way: "other higher priority aspects for my headspace"
