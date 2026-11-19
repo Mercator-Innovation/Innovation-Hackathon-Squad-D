@@ -37,6 +37,7 @@ ai_use_week_after: 2
 - 18:12 prompt: "make the progress tab kpi's look better and more colourful and easier to see and report progress , using RAG status" → Claude redesigned the Progress tab I'd built with red, amber and green cards and a summary. I'm building more with Claude and gaining more confidence than when we started
 - 18:12 Enjoying the team dynamic and collaboration: everyone building on each other's work (my sensor readings and paper notes went into Rob's first version, and my Progress tab uses Faye's Cloch KPIs)
 - 18:13 It has been great collaboration tooling
+- 18:49 (19 Nov) prompt: "Amend this presentation with christmas theme , red and green colours like the final slide and add any christmas puns relating to the content in the slides, which should remain the same." → Claude restyled our show and tell deck in Christmas red and green with a pun on every slide, keeping the content the same. From there I turned slide after slide into illustrated scenes (a Christmas tree, Santa's workshop, a fireplace with a cat, a nice and naughty list), with no design tools beyond chatting with Claude
 
 ## At 19:00
 - What I worked on: The design or the look; Research or finding things out
