@@ -19,10 +19,12 @@ pace: right
 worked_best: [building, mixed-squad, setup]
 again: definitely
 # In the week after
-specialist:
-helped_squad: []
-idea_where: []
-ai_use_week_after:
+specialist: often
+helped_squad: [screen]
+idea_where: [internal]
+ai_use_week_after: 3
+# Three-week check-in
+idea_tried: planned
 ---
 
 # Rob Edwards: learning log
@@ -49,11 +51,12 @@ ai_use_week_after:
 - One thing to change next time: Nothing
 
 ## In the week after
-- Did I still need a human specialist: <answer>, for <what>
-- What helped most when building as a squad: <answers>
-- The most useful thing I learned: <in my words>
-- **One idea to carry forward:** <in my words>, and where it could fit: <answers>
-- How much I expect to use AI tools from now on: <answer>
+- Did I still need a human specialist: Often. For example, Joe as a content designer pointing out the use of the word "decision" could be replaced with something better.
+- What helped most when building as a squad: The shared screen
+- The most useful thing I learned: Not a thing in particular, but just getting some hands-on experience with Claude in an environment where I can afford to play around.
+- **One idea to carry forward:** I'm interested in internal AI projects where my knowledge can be useful. I think RAG will be useful for effective reference to FAQs and documents. I would be learning things about this myself as well so I can use Claude for both learning and building. Where it could fit: Internal work
+- How much I expect to use AI tools from now on: Most weeks
 
-## Three-week check-in (around 12 Nov)
-- Did I try, share or suggest my idea anywhere? What happened, or what got in the way?
+## Three-week check-in
+- Have I tried, shared or suggested my idea: Not yet, but I plan to
+- What happened, or what got in the way: I've been busy with other work.
